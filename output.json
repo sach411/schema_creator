@@ -2,15 +2,28 @@
  {
   "description": "Fund Id",
   "type": "string",
-  "sourceName": "Salesforce Data Dictionary",
-  "sourceType": "Service",
-  "sourceAttribute": "FM_fund.Fund_id_c"
+  "sources": {
+   "sourceName": "Salesforce Data Dictionary",
+   "sourceType": "Service",
+   "sourceAttribute": "FM_fund.Fund_id_c"
+  }
+ },
+ {
+  "description": "Fund Id",
+  "type": "string",
+  "sources": {
+   "sourceName": "IDR",
+   "sourceType": "Database",
+   "sourceAttribute": "Fund.FundId"
+  }
  },
  {
   "description": "Fund Name",
   "type": "string",
-  "sourceName": "Salesforce Data Dictionary",
-  "sourceType": "Service",
-  "sourceAttribute": "FM_fund.Fund_Legal_Name\u00ae"
+  "sources": {
+   "sourceName": "Salesforce Data Dictionary",
+   "sourceType": "Service",
+   "sourceAttribute": "FM_fund.Fund_Legal_Name\u00ae"
+  }
  }
 ]

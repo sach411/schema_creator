@@ -1,3 +1,4 @@
-"description","type","sourceName","sourceType","sourceAttribute"
-"Fund Id","string","Salesforce Data Dictionary","Service","FM_fund.Fund_id_c"
-"Fund Name","string","Salesforce Data Dictionary","Service","FM_fund.Fund_Legal_Name®"
+"description","type","primaryKey","sourceName","sourceType","sourceAttribute"
+"Fund Id","string","false","Salesforce Data Dictionary","Service","FM_fund.Fund_id_c"
+"Fund Id","string","false","IDR","Database","Fund.FundId"
+"Fund Name","string","false","Salesforce Data Dictionary","Service","FM_fund.Fund_Legal_Name®"
