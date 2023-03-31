@@ -1,0 +1,16 @@
+[
+ {
+  "description": "Fund Id",
+  "type": "string",
+  "sourceName": "Salesforce Data Dictionary",
+  "sourceType": "Service",
+  "sourceAttribute": "FM_fund.Fund_id_c"
+ },
+ {
+  "description": "Fund Name",
+  "type": "string",
+  "sourceName": "Salesforce Data Dictionary",
+  "sourceType": "Service",
+  "sourceAttribute": "FM_fund.Fund_Legal_Name\u00ae"
+ }
+]
