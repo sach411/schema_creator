@@ -31,30 +31,38 @@ def csv_json_using_pandas():
         sourceType  =d['sourceType']
         sourceAttribute = d['sourceAttribute']
 
+        #if ovType == "object":
+            #continue
+
         if ovName not in tag_set:
+
             print(f"New Tag: {ovName} -> {ovType}-> {tag_set}")
             tag_set.add(ovName)
 
             nested_dict = {}
-            record = {}
+
             nested_dict[ovName] = {
                 "description" : description,
-                "type" : ovType,
-                "x-collibra":{"primaryKey": primaryKey,
-                              "sources": list()
-                              }
+                "type" : ovType
             }
-            nested_dict[ovName]["x-collibra"]['sources'] = list()
-            nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
-                                      "sourceType":sourceType,
-                                      "sourceAttribute":sourceAttribute})
+
+            # for type object, no need for x-collibra tag.
+            if ovType != "object":
+                print(f"object type. Adding only needed tags.")
+                nested_dict[ovName]["x-collibra"] = {"primaryKey": primaryKey,
+                                  "sources": list()}
+                nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
+                                          "sourceType":sourceType,
+                                          "sourceAttribute":sourceAttribute})
+
+
             nested_data.append(nested_dict)
 
         else:
             print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
             for item in nested_data:
                 if ovName in item:
-                    print(f">>>item: {type(item)} --> {item}")
+                    #print(f">>>item: {type(item)} --> {item}")
                     item[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
                                       "sourceType":sourceType,
                                       "sourceAttribute":sourceAttribute})
@@ -62,7 +70,6 @@ def csv_json_using_pandas():
 
 
     json_data = json.dumps(nested_data, indent=1)
-    #json_data = df.to_json(orient='records', indent=1)
 
     with open('output.json', 'w') as json_file:
         json_file.write((json_data))

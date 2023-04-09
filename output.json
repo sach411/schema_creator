@@ -39,17 +39,7 @@
  {
   "dealingTerms": {
    "description": "dealing Terms",
-   "type": "object",
-   "x-collibra": {
-    "primaryKey": NaN,
-    "sources": [
-     {
-      "sourceName": NaN,
-      "sourceType": NaN,
-      "sourceAttribute": NaN
-     }
-    ]
-   }
+   "type": "object"
   }
  },
  {
