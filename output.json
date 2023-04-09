@@ -1,29 +1,51 @@
 [
  {
-  "description": "Fund Id",
-  "type": "string",
-  "sources": {
-   "sourceName": "Salesforce Data Dictionary",
-   "sourceType": "Service",
-   "sourceAttribute": "FM_fund.Fund_id_c"
+  "fundSFDCId": {
+   "description": "Fund Id",
+   "type": "string",
+   "sources": [
+    {
+     "sourceName": "Salesforce Data Dictionary",
+     "sourceType": "Service",
+     "sourceAttribute": "FM_fund.Fund_id_c"
+    },
+    {
+     "sourceName": "IDR",
+     "sourceType": "Database",
+     "sourceAttribute": "Fund.FundId"
+    }
+   ]
   }
  },
  {
-  "description": "Fund Id",
-  "type": "string",
-  "sources": {
-   "sourceName": "IDR",
-   "sourceType": "Database",
-   "sourceAttribute": "Fund.FundId"
+  "fundSFDCId": {
+   "description": "Fund Id",
+   "type": "string",
+   "sources": [
+    {
+     "sourceName": "Salesforce Data Dictionary",
+     "sourceType": "Service",
+     "sourceAttribute": "FM_fund.Fund_id_c"
+    },
+    {
+     "sourceName": "IDR",
+     "sourceType": "Database",
+     "sourceAttribute": "Fund.FundId"
+    }
+   ]
   }
  },
  {
-  "description": "Fund Name",
-  "type": "string",
-  "sources": {
-   "sourceName": "Salesforce Data Dictionary",
-   "sourceType": "Service",
-   "sourceAttribute": "FM_fund.Fund_Legal_Name\u00ae"
+  "fundName": {
+   "description": "Fund Name",
+   "type": "string",
+   "sources": [
+    {
+     "sourceName": "Salesforce Data Dictionary",
+     "sourceType": "Service",
+     "sourceAttribute": "FM_fund.Fund_Legal_Name\u00ae"
+    }
+   ]
   }
  }
 ]
