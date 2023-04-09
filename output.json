@@ -35,5 +35,37 @@
     ]
    }
   }
+ },
+ {
+  "dealingTerms": {
+   "description": "dealing Terms",
+   "type": "object",
+   "x-collibra": {
+    "primaryKey": NaN,
+    "sources": [
+     {
+      "sourceName": NaN,
+      "sourceType": NaN,
+      "sourceAttribute": NaN
+     }
+    ]
+   }
+  }
+ },
+ {
+  "dealingTerms.redemptionAdvanceNoticedays": {
+   "description": "redemption Advance Noticedays",
+   "type": "object.number",
+   "x-collibra": {
+    "primaryKey": false,
+    "sources": [
+     {
+      "sourceName": "Salesforce Data Dictionary",
+      "sourceType": "Service",
+      "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
+     }
+    ]
+   }
+  }
  }
 ]

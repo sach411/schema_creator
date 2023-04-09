@@ -22,31 +22,44 @@ def csv_json_using_pandas():
     tag_set = set()
 
     for d in data_dict:
-        print(f"{d}")
-        if d['ovName'] not in tag_set:
-            print(f"{d['ovName']} NOT present in tag_set : {tag_set}")
-            tag_set.add(d['ovName'])
+        #print(f"{d}")
+        ovName = d['ovName']
+        description = d['description']
+        ovType = d['type']
+        primaryKey = d['primaryKey']
+        sourceName = d['sourceName']
+        sourceType  =d['sourceType']
+        sourceAttribute = d['sourceAttribute']
+
+        if ovName not in tag_set:
+            print(f"New Tag: {ovName} -> {ovType}-> {tag_set}")
+            tag_set.add(ovName)
 
             nested_dict = {}
             record = {}
-            nested_dict[d["ovName"]] = {
-                "description" : d['description'],
-                "type" : d['type'],
-                "x-collibra":{"primaryKey": d['primaryKey'],
+            nested_dict[ovName] = {
+                "description" : description,
+                "type" : ovType,
+                "x-collibra":{"primaryKey": primaryKey,
                               "sources": list()
                               }
             }
-            nested_dict[d["ovName"]]["x-collibra"]['sources'] = list()
-            nested_dict[d["ovName"]]["x-collibra"]['sources'].append({"sourceName":d['sourceName'],
-                                      "sourceType":d['sourceType'],
-                                      "sourceAttribute":d['sourceAttribute']})
+            nested_dict[ovName]["x-collibra"]['sources'] = list()
+            nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
+                                      "sourceType":sourceType,
+                                      "sourceAttribute":sourceAttribute})
             nested_data.append(nested_dict)
 
         else:
-            print(f"{d['ovName']} present in tag_set : {tag_set}")
-            nested_dict[d["ovName"]]["x-collibra"]['sources'].append({"sourceName":d['sourceName'],
-                                      "sourceType":d['sourceType'],
-                                      "sourceAttribute":d['sourceAttribute']})
+            print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
+            for item in nested_data:
+                if ovName in item:
+                    print(f">>>item: {type(item)} --> {item}")
+                    item[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
+                                      "sourceType":sourceType,
+                                      "sourceAttribute":sourceAttribute})
+                    break
+
 
     json_data = json.dumps(nested_data, indent=1)
     #json_data = df.to_json(orient='records', indent=1)

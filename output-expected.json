@@ -35,5 +35,71 @@
    ]
    }
   }
+ },
+ {
+  "dealingTerms": {
+   "description": "Dealing Terms",
+   "type": "object",
+   "properties": {
+     "redemptionAdvanceNoticedays": {
+       "description": "Redemption Advance Noticedays",
+       "type": "number",
+         "x-collibra": {
+         "primaryKey": false,
+         "sources": [
+           {
+            "sourceName": "Salesforce Data Dictionary",
+            "sourceType": "Service",
+            "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
+           }
+        ]
+        }
+     }
+   }
+  }
+ },
+ {
+   "fundCustodian": {
+   "description": "fund custodian",
+   "type": "array",
+   "uniqueItems": true,
+   "items": {
+     "description": "fund custodian object items",
+     "type": "object",
+     "properties": {
+       "custodianAccountNumber": {
+       "description": "custodianAccountNumber",
+       "type": "string",
+         "x-collibra": {
+         "primaryKey": false,
+         "sources": [
+           {
+            "sourceName": "Salesforce Data Dictionary",
+            "sourceType": "Service",
+            "sourceAttribute": "FM_fund.custodianAccountNumber"
+           }
+        ]
+        }
+     },
+       "custodianName": {
+       "description": "custodianName",
+       "type": "string",
+         "x-collibra": {
+         "primaryKey": false,
+         "sources": [
+           {
+            "sourceName": "Salesforce Data Dictionary",
+            "sourceType": "Service",
+            "sourceAttribute": "FM_fund.custodianName"
+           }
+        ]
+        }
+     }
+    },
+     "additionalProprties": false
+   }
+
+  }
  }
+
 ]
