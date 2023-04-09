@@ -26,22 +26,25 @@ def csv_json_using_pandas():
         if d['ovName'] not in tag_set:
             print(f"{d['ovName']} NOT present in tag_set : {tag_set}")
             tag_set.add(d['ovName'])
+
             nested_dict = {}
             record = {}
             nested_dict[d["ovName"]] = {
                 "description" : d['description'],
                 "type" : d['type'],
-                "sources" : list()
+                "x-collibra":{"primaryKey": d['primaryKey'],
+                              "sources": list()
+                              }
             }
-            nested_dict[d["ovName"]]['sources'] = list()
-            nested_dict[d["ovName"]]['sources'].append({"sourceName":d['sourceName'],
+            nested_dict[d["ovName"]]["x-collibra"]['sources'] = list()
+            nested_dict[d["ovName"]]["x-collibra"]['sources'].append({"sourceName":d['sourceName'],
                                       "sourceType":d['sourceType'],
                                       "sourceAttribute":d['sourceAttribute']})
             nested_data.append(nested_dict)
 
         else:
             print(f"{d['ovName']} present in tag_set : {tag_set}")
-            nested_dict[d["ovName"]]['sources'].append({"sourceName":d['sourceName'],
+            nested_dict[d["ovName"]]["x-collibra"]['sources'].append({"sourceName":d['sourceName'],
                                       "sourceType":d['sourceType'],
                                       "sourceAttribute":d['sourceAttribute']})
 

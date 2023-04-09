@@ -1,4 +1,4 @@
 "ovName","description","type","primaryKey","sourceName","sourceType","sourceAttribute"
 "fundSFDCId","Fund Id","string","false","Salesforce Data Dictionary","Service","FM_fund.Fund_id_c"
 "fundSFDCId","Fund Id","string","false","IDR","Database","Fund.FundId"
-"fundName","Fund Name","string","false","Salesforce Data Dictionary","Service","FM_fund.Fund_Legal_Name"
+"fundName","Fund Name","string","true","Salesforce Data Dictionary","Service","FM_fund.Fund_Legal_Name"

@@ -16,8 +16,8 @@
       "sourceType": "Database",
       "sourceAttribute": "Fund.FundId"
      }
-    ]
-   }
+   ]
+  }
   }
  },
  {
@@ -25,14 +25,14 @@
    "description": "Fund Name",
    "type": "string",
    "x-collibra": {
-    "primaryKey": true,
+    "primaryKey": false,
     "sources": [
-     {
-      "sourceName": "Salesforce Data Dictionary",
-      "sourceType": "Service",
-      "sourceAttribute": "FM_fund.Fund_Legal_Name"
-     }
-    ]
+    {
+     "sourceName": "Salesforce Data Dictionary",
+     "sourceType": "Service",
+     "sourceAttribute": "FM_fund.Fund_Legal_Name"
+    }
+   ]
    }
   }
  }
