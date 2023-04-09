@@ -34,14 +34,16 @@ def csv_json_using_pandas():
                 "sources" : list()
             }
             nested_dict[d["ovName"]]['sources'] = list()
+            nested_dict[d["ovName"]]['sources'].append({"sourceName":d['sourceName'],
+                                      "sourceType":d['sourceType'],
+                                      "sourceAttribute":d['sourceAttribute']})
+            nested_data.append(nested_dict)
+
         else:
             print(f"{d['ovName']} present in tag_set : {tag_set}")
-
-            #nested_dict['type'] = d['type']
-        nested_dict[d["ovName"]]['sources'].append({"sourceName":d['sourceName'],
-                                  "sourceType":d['sourceType'],
-                                  "sourceAttribute":d['sourceAttribute']})
-        nested_data.append(nested_dict)
+            nested_dict[d["ovName"]]['sources'].append({"sourceName":d['sourceName'],
+                                      "sourceType":d['sourceType'],
+                                      "sourceAttribute":d['sourceAttribute']})
 
     json_data = json.dumps(nested_data, indent=1)
     #json_data = df.to_json(orient='records', indent=1)
