@@ -48,16 +48,26 @@ def csv_json_using_pandas():
 
             # for type object, no need for x-collibra tag.
             if ovType != "object":
-                print(f"object type. Adding only needed tags.")
+                if ovType.split(".")[0] == "object":
+                    oname = ovName.split(".")[0]
+                    oname1= ovName.split(".")[1]
+                    print(f"create under object..{oname}")
+                    for item in nested_data:
+                        if oname in item:
+                            nested_dict[ovName]["type"] = ovType.split(".")[1]
+                            item[oname]["properties"][oname1] = nested_dict[ovName]
+
                 nested_dict[ovName]["x-collibra"] = {"primaryKey": primaryKey,
                                   "sources": list()}
                 nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
                                           "sourceType":sourceType,
                                           "sourceAttribute":sourceAttribute})
-
+            else:
+                # for type "object", include "properties" tag
+                print(f"object type. Adding properties tag.")
+                nested_dict[ovName]["properties"] = {}
 
             nested_data.append(nested_dict)
-
         else:
             print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
             for item in nested_data:
