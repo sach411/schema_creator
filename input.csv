@@ -4,3 +4,4 @@
 "fundSFDCId","Fund Id","string","false","IDR","Database","Fund.FundId"
 "dealingTerms","dealing Terms","object","","","",""
 "dealingTerms.redemptionAdvanceNoticedays","redemption Advance Noticedays","object.number","false","Salesforce Data Dictionary","Service","FM_fund.redemptionAdvanceNoticedays"
+"dealingTerms.redemptionAdvanceNoticeDayOfMonth","redemption Advance Notice DayOfMonth","object.string","false","Salesforce Data Dictionary","Service","FM_fund.redemptionAdvanceNoticeDayOfMonth"

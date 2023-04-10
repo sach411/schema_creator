@@ -67,6 +67,7 @@ def csv_json_using_pandas():
                 print(f"object type. Adding properties tag.")
                 nested_dict[ovName]["properties"] = {}
 
+            #if ovType.split(".")[0] != "object":
             nested_data.append(nested_dict)
         else:
             print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
@@ -77,7 +78,16 @@ def csv_json_using_pandas():
                                       "sourceType":sourceType,
                                       "sourceAttribute":sourceAttribute})
                     break
+    del_ind = []
+    for ind, i in enumerate(nested_data):
+        if "." in list(i.keys())[0]:
+            print(f"{list(i.keys())[0]}")
+            del_ind.append(ind)
 
+    print(f"remove: {del_ind} from {len(nested_data)}, {nested_data}")
+
+    for ele in sorted(del_ind, reverse=True):
+        del nested_data[ele]
 
     json_data = json.dumps(nested_data, indent=1)
 
