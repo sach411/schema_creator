@@ -1,0 +1,24 @@
+{
+ "fundSFDCId": {
+  "description": "Fund Id",
+  "type": "string"
+ },
+ "fundName": {
+  "description": "Fund Name",
+  "type": "string"
+ },
+ "dealingTerms": {
+  "description": "dealing Terms",
+  "type": "object",
+  "properties": {
+   "redemptionAdvanceNoticedays": {
+    "description": "redemption Advance Noticedays",
+    "type": "number"
+   },
+   "redemptionAdvanceNoticeDayOfMonth": {
+    "description": "redemption Advance Notice DayOfMonth",
+    "type": "string"
+   }
+  }
+ }
+}

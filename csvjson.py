@@ -2,46 +2,33 @@ import pandas as pd
 import json
 import os
 
-def csv_json():
-    import csv
+def get_param(param_name, default_value):
+    return os.getenv(param_name, default_value)
 
-    with open('input.csv', newline='') as csvfile:
-        reader = csv.DictReader(csvfile)
-        rows = list(reader)
-
-    with open('output.json', 'w') as jsonfile:
-        json.dump(rows, jsonfile, indent=1)
-
-
-def csv_json_using_pandas():
-    # is x-collibra is in env variable, then generate x-collibra tags.
-    xc = True if os.getenv("x-collibra") else False
-
-    schema = {"title" : 'ovfund',
-              "description": "ovfund schema",
-              "type" : "object", "properties":{}}
-
-    print(f"Invoking {csv_json_using_pandas.__name__}")
-    df = pd.read_csv("input.csv")
+def get_data_dict_from_csv(input_csv=None):
+    df = pd.read_csv(input_csv)
     data_dict = df.to_dict(orient='records')
-    print(f'total records: {len(data_dict)}')
+    return data_dict
 
+def process(data_dict=None, x_collibra=None):
     nested_data = []
     tag_set = set()
 
-    for d in data_dict:
+    # for d in data_dict:
+    for index, d in enumerate(data_dict):
         #print(f"{d}")
         ovName = d['ovName']
         description = d['description']
         ovType = d['type']
-        if xc:
+        print(f"\t{index+1}->{ovName} -> {ovType}-> {description}")
+
+        if x_collibra:
             primaryKey = d['primaryKey']
             sourceName = d['sourceName']
             sourceType  =d['sourceType']
             sourceAttribute = d['sourceAttribute']
-        if ovName not in tag_set:
 
-            print(f"New Tag: {ovName} -> {ovType}-> {tag_set}")
+        if ovName not in tag_set:
             tag_set.add(ovName)
 
             nested_dict = {}
@@ -56,13 +43,13 @@ def csv_json_using_pandas():
                 if ovType.split(".")[0] == "object":
                     oname = ovName.split(".")[0]
                     oname1= ovName.split(".")[1]
-                    print(f"create under object..{oname}")
+                    # print(f"create under object..{oname}")
                     for item in nested_data:
                         if oname in item:
                             nested_dict[ovName]["type"] = ovType.split(".")[1]
                             item[oname]["properties"][oname1] = nested_dict[ovName]
 
-                if xc:
+                if x_collibra:
                     nested_dict[ovName]["x-collibra"] = {"primaryKey": primaryKey,
                                       "sources": list()}
                     nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
@@ -70,7 +57,7 @@ def csv_json_using_pandas():
                                               "sourceAttribute":sourceAttribute})
             else:
                 # for type "object", include "properties" tag
-                print(f"object type. Adding properties tag.")
+                # print(f"object type. Adding properties tag.")
                 nested_dict[ovName]["properties"] = {}
 
             nested_data.append(nested_dict)
@@ -78,7 +65,7 @@ def csv_json_using_pandas():
             #print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
             for item in nested_data:
                 if ovName in item:
-                    if xc:
+                    if x_collibra:
                         item[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
                                           "sourceType":sourceType,
                                           "sourceAttribute":sourceAttribute})
@@ -89,18 +76,42 @@ def csv_json_using_pandas():
             print(f"{list(i.keys())[0]}")
             del_ind.append(ind)
 
-    print(f"remove: {del_ind} from {len(nested_data)}, {nested_data}")
+    # print(f"remove: {del_ind} from {len(nested_data)}, {nested_data}")
 
     for ele in sorted(del_ind, reverse=True):
         del nested_data[ele]
 
     nested_data = {key: value for dictionary in nested_data for key, value in dictionary.items()}
 
-    json_data = json.dumps(nested_data, indent=1)
+    return nested_data
 
-    with open('output.json', 'w') as json_file:
+def generate_schema_file(output_file=None, json_data=None):
+    print(f"****{generate_schema_file.__name__}: {output_file}")
+    with open(output_file, 'w') as json_file:
         json_file.write((json_data))
 
+def csv_json_using_pandas():
+    schema_name = get_param("schema_name","ovfund")
+    schema_description = get_param("schema_description", "ovfund schema")
+    schema = {"title" : schema_name,
+              "description": schema_description,
+              "type" : "object", "properties":{}}
+
+    print(f"Invoking {csv_json_using_pandas.__name__}")
+    data_dict = get_data_dict_from_csv(input_csv="input.csv")
+    print(f'total records: {len(data_dict)}')
+
+    # collibra tag included file
+    nested_data=process(data_dict=data_dict,x_collibra=True)
+    json_data_x_collibra = json.dumps(nested_data, indent=1)
+    out_file_collibra = f"{schema_name}-x-collibra.json"
+    generate_schema_file(output_file=out_file_collibra, json_data=json_data_x_collibra)
+
+    # no collibra tag file
+    nested_data=process(data_dict=data_dict,x_collibra=False)
+    json_data = json.dumps(nested_data, indent=1)
+    out_file=f"{schema_name}.json"
+    generate_schema_file(output_file=out_file, json_data=json_data)
 
 if __name__=="__main__":
     print(f"Invoking..")
