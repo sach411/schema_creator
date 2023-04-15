@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+import os
 
 def csv_json():
     import csv
@@ -13,6 +14,9 @@ def csv_json():
 
 
 def csv_json_using_pandas():
+    # is x-collibra is in env variable, then generate x-collibra tags.
+    xc = True if os.getenv("x-collibra") else False
+
     schema = {"title" : 'ovfund',
               "description": "ovfund schema",
               "type" : "object", "properties":{}}
@@ -30,10 +34,11 @@ def csv_json_using_pandas():
         ovName = d['ovName']
         description = d['description']
         ovType = d['type']
-        primaryKey = d['primaryKey']
-        sourceName = d['sourceName']
-        sourceType  =d['sourceType']
-        sourceAttribute = d['sourceAttribute']
+        if xc:
+            primaryKey = d['primaryKey']
+            sourceName = d['sourceName']
+            sourceType  =d['sourceType']
+            sourceAttribute = d['sourceAttribute']
         if ovName not in tag_set:
 
             print(f"New Tag: {ovName} -> {ovType}-> {tag_set}")
@@ -57,11 +62,12 @@ def csv_json_using_pandas():
                             nested_dict[ovName]["type"] = ovType.split(".")[1]
                             item[oname]["properties"][oname1] = nested_dict[ovName]
 
-                nested_dict[ovName]["x-collibra"] = {"primaryKey": primaryKey,
-                                  "sources": list()}
-                nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
-                                          "sourceType":sourceType,
-                                          "sourceAttribute":sourceAttribute})
+                if xc:
+                    nested_dict[ovName]["x-collibra"] = {"primaryKey": primaryKey,
+                                      "sources": list()}
+                    nested_dict[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
+                                              "sourceType":sourceType,
+                                              "sourceAttribute":sourceAttribute})
             else:
                 # for type "object", include "properties" tag
                 print(f"object type. Adding properties tag.")
@@ -72,11 +78,11 @@ def csv_json_using_pandas():
             #print(f"Existing Tag : {ovName} -> {ovType}->  {tag_set}")
             for item in nested_data:
                 if ovName in item:
-                    #print(f">>>item: {type(item)} --> {item}")
-                    item[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
-                                      "sourceType":sourceType,
-                                      "sourceAttribute":sourceAttribute})
-                    break
+                    if xc:
+                        item[ovName]["x-collibra"]['sources'].append({"sourceName":sourceName,
+                                          "sourceType":sourceType,
+                                          "sourceAttribute":sourceAttribute})
+                        break
     del_ind = []
     for ind, i in enumerate(nested_data):
         if "." in list(i.keys())[0]:
