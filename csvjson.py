@@ -11,10 +11,10 @@ def get_data_dict_from_csv(input_csv=None):
     return data_dict
 
 def process(data_dict=None, x_collibra=None):
+    """process list of data_dict to create the nested data dict"""
     nested_data = []
     tag_set = set()
 
-    # for d in data_dict:
     for index, d in enumerate(data_dict):
         #print(f"{d}")
         ovName = d['ovName']
@@ -57,7 +57,6 @@ def process(data_dict=None, x_collibra=None):
                                               "sourceAttribute":sourceAttribute})
             else:
                 # for type "object", include "properties" tag
-                # print(f"object type. Adding properties tag.")
                 nested_dict[ovName]["properties"] = {}
 
             nested_data.append(nested_dict)
@@ -91,15 +90,22 @@ def generate_schema_file(output_file=None, json_data=None):
         json_file.write((json_data))
 
 def csv_json_using_pandas():
-    schema_name = get_param("schema_name","ovfund")
-    schema_description = get_param("schema_description", "ovfund schema")
+    """
+
+    :return:
+    """
+    # pass schema_file, name (optional), description(optional) as env variable
+    input_csv = get_param("schema_file","input.csv")
+    base_name, extension = os.path.splitext(input_csv)
+    schema_name = get_param("name",base_name)
+    schema_description = get_param("description", f"{base_name} - schema")
     schema = {"title" : schema_name,
               "description": schema_description,
               "type" : "object", "properties":{}}
 
-    print(f"Invoking {csv_json_using_pandas.__name__}")
+    print(f"Invoking {csv_json_using_pandas.__name__} for schema:`{schema_name}`, description:`{schema_description}`")
     data_dict = get_data_dict_from_csv(input_csv="input.csv")
-    print(f'total records: {len(data_dict)}')
+    print(f'total records in input file: `{input_csv}`: {len(data_dict)}')
 
     # collibra tag included file
     nested_data=process(data_dict=data_dict,x_collibra=True)
