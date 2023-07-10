@@ -37,12 +37,32 @@ def csv_to_json(csv_file_path, json_file_path):
                     'sources': []
                 }
             }
-        source = {
-            COLUMN_SOURCE_NAME: row[COLUMN_SOURCE_NAME],
-            COLUMN_SOURCE_TYPE: row[COLUMN_SOURCE_TYPE],
-            COLUMN_SOURCE_ATTRIBUTE: row[COLUMN_SOURCE_ATTRIBUTE]
-        }
-        json_data[ov_name]['x-collibra']['sources'].append(source)
+            if row[COLUMN_TYPE] == 'object':
+                json_data[ov_name]['properties'] = {}
+        if row[COLUMN_TYPE] != 'object':
+            source = {
+                COLUMN_SOURCE_NAME: row[COLUMN_SOURCE_NAME],
+                COLUMN_SOURCE_TYPE: row[COLUMN_SOURCE_TYPE],
+                COLUMN_SOURCE_ATTRIBUTE: row[COLUMN_SOURCE_ATTRIBUTE]
+            }
+            json_data[ov_name]['x-collibra']['sources'].append(source)
+        else:
+            property_name = row[COLUMN_SOURCE_NAME]
+            property_type = row[COLUMN_TYPE].split('.')[1]
+            property_source = {
+                COLUMN_SOURCE_NAME: row[COLUMN_SOURCE_NAME],
+                COLUMN_SOURCE_TYPE: row[COLUMN_SOURCE_TYPE],
+                COLUMN_SOURCE_ATTRIBUTE: row[COLUMN_SOURCE_ATTRIBUTE]
+            }
+            property_data = {
+                COLUMN_DESCRIPTION: row[COLUMN_DESCRIPTION],
+                COLUMN_TYPE: property_type,
+                'x-collibra': {
+                    COLUMN_PRIMARY_KEY: row[COLUMN_PRIMARY_KEY],
+                    'sources': [property_source]
+                }
+            }
+            json_data[ov_name]['properties'][property_name] = property_data
 
     # Write the data as JSON to a file
     with open(json_file_path, 'w') as json_file:
