@@ -44,6 +44,12 @@ def csv_to_json(csv_file_path, json_file_path):
         }
         if '.' in ov_name:
             parent_ov_name, property_name = ov_name.split('.', 1)
+            if parent_ov_name not in json_data:
+                json_data[parent_ov_name] = {
+                    COLUMN_DESCRIPTION: row[COLUMN_DESCRIPTION],
+                    COLUMN_TYPE: "object",
+                    'properties': {}
+                }
             if 'properties' not in json_data[parent_ov_name]:
                 json_data[parent_ov_name]['properties'] = {}
             json_data[parent_ov_name]['properties'][property_name] = {
@@ -54,7 +60,6 @@ def csv_to_json(csv_file_path, json_file_path):
                     'sources': []
                 }
             }
-            json_data[parent_ov_name]['type'] = 'object'
             ov_name = parent_ov_name
         json_data[ov_name]['x-collibra']['sources'].append(source)
 
