@@ -1,5 +1,6 @@
 import pandas as pd
 import json
+from datetime import datetime
 
 # Define column names as constants
 COLUMN_OV_NAME = 'ovName'
@@ -9,7 +10,6 @@ COLUMN_PRIMARY_KEY = 'primaryKey'
 COLUMN_SOURCE_NAME = 'sourceName'
 COLUMN_SOURCE_TYPE = 'sourceType'
 COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
-
 
 def json_to_csv(json_file_path, csv_file_path):
     # Read the JSON file
@@ -31,8 +31,7 @@ def json_to_csv(json_file_path, csv_file_path):
             rows.append(row)
             if 'properties' in data:
                 for prop_name, prop_data in data['properties'].items():
-                    prop_row = [f"{ov_name}.{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '',
-                                '', '']
+                    prop_row = [f"{ov_name}.{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
                     if 'x-collibra' in prop_data:
                         prop_row[3] = str(prop_data['x-collibra'][COLUMN_PRIMARY_KEY])
                         for source in prop_data['x-collibra']['sources']:
@@ -44,14 +43,22 @@ def json_to_csv(json_file_path, csv_file_path):
                         rows.append(prop_row)
 
     # Create DataFrame
-    df = pd.DataFrame(rows,
-                      columns=[COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME,
-                               COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE])
+    df = pd.DataFrame(rows, columns=[COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE])
+
+    # Create a backup of the existing CSV file
+    backup_file_path = add_timestamp_suffix(csv_file_path)
+    df.to_csv(backup_file_path, index=False)
+    print(f"Backup created successfully: {backup_file_path}")
 
     # Write DataFrame to CSV file
     df.to_csv(csv_file_path, index=False)
-    print("CSV file created successfully.")
+    print(f"CSV file created successfully: {csv_file_path}")
 
+def add_timestamp_suffix(file_path):
+    timestamp = datetime.now().strftime('%m_%d_%Y_%H_%M_%S')
+    file_name, extension = file_path.rsplit('.', 1)
+    backup_file_path = f"{file_name}_{timestamp}.{extension}"
+    return backup_file_path
 
 # Example usage
 json_file_path = 'input.json'
