@@ -1,34 +1,46 @@
 import pandas as pd
 import json
 
+# Define column names as constants
+COLUMN_OV_NAME = 'ovName'
+COLUMN_DESCRIPTION = 'description'
+COLUMN_TYPE = 'type'
+COLUMN_PRIMARY_KEY = 'primaryKey'
+COLUMN_SOURCE_NAME = 'sourceName'
+COLUMN_SOURCE_TYPE = 'sourceType'
+COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
+
 
 def csv_to_json(csv_file_path, json_file_path):
     # Read the CSV file using pandas
     df = pd.read_csv(csv_file_path)
 
     # Identify duplicate rows based on selected columns
-    duplicates = df[df.duplicated(subset=['ovName', 'sourceName', 'sourceType', 'sourceAttribute'], keep=False)]
+    duplicates = df[
+        df.duplicated(subset=[COLUMN_OV_NAME, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE],
+                      keep=False)]
 
     # Drop duplicate rows based on selected columns
-    df.drop_duplicates(subset=['ovName', 'sourceName', 'sourceType', 'sourceAttribute'], inplace=True)
+    df.drop_duplicates(subset=[COLUMN_OV_NAME, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE],
+                       inplace=True)
 
     # Convert DataFrame to JSON structure
     json_data = {}
     for _, row in df.iterrows():
-        ov_name = row['ovName']
+        ov_name = row[COLUMN_OV_NAME]
         if ov_name not in json_data:
             json_data[ov_name] = {
-                'description': row['description'],
-                'type': row['type'],
+                COLUMN_DESCRIPTION: row[COLUMN_DESCRIPTION],
+                COLUMN_TYPE: row[COLUMN_TYPE],
                 'x-collibra': {
-                    'primaryKey': row['primaryKey'],
+                    COLUMN_PRIMARY_KEY: row[COLUMN_PRIMARY_KEY],
                     'sources': []
                 }
             }
         source = {
-            'sourceName': row['sourceName'],
-            'sourceType': row['sourceType'],
-            'sourceAttribute': row['sourceAttribute']
+            COLUMN_SOURCE_NAME: row[COLUMN_SOURCE_NAME],
+            COLUMN_SOURCE_TYPE: row[COLUMN_SOURCE_TYPE],
+            COLUMN_SOURCE_ATTRIBUTE: row[COLUMN_SOURCE_ATTRIBUTE]
         }
         json_data[ov_name]['x-collibra']['sources'].append(source)
 
