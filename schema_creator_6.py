@@ -27,15 +27,15 @@ def csv_to_json(csv_file_path, json_file_path):
                 json_data[ov_name] = {
                     'title': ov_name,
                     'description': description,
-                    'type': ov_type,
-                    'x-collibra': {
+                    'type': ov_type
+                }
+            if ov_type not in ['array.object.unique']:
+                json_data[ov_name]['x-collibra'] = {
                         'primaryKey': row[COLUMN_PRIMARY_KEY],
                         'sources': []
                     }
-                }
-
             source_name = row[COLUMN_SOURCE_NAME]
-            if source_name:
+            if not pd.isna(source_name):
                 source = {
                     'sourceName': source_name,
                     'sourceType': row[COLUMN_SOURCE_TYPE],
@@ -78,6 +78,19 @@ def csv_to_json(csv_file_path, json_file_path):
 
                 if source not in json_data[parent_name]['properties'][property_name]['x-collibra']['sources']:
                     json_data[parent_name]['properties'][property_name]['x-collibra']['sources'].append(source)
+
+    # Add the "items" node for properties starting with "array."
+    for ov_name, data in json_data.items():
+        if ov_name.startswith('array.'):
+            property_name = ov_name[6:]
+            if property_name in json_data and 'properties' in json_data[property_name]:
+                data['type'] = 'array'
+                data['items'] = {
+                    'description': data['description'],
+                    'type': 'object',
+                    'properties': json_data[property_name]['properties']
+                }
+                del data['properties']
 
     # Write the data as JSON to a file
     with open(json_file_path, 'w') as json_file:
