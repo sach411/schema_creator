@@ -28,22 +28,21 @@ def csv_to_json(csv_file_path, json_file_path):
                     'title': ov_name,
                     'description': description,
                     'type': ov_type,
+                    'x-collibra': {
+                        'primaryKey': row[COLUMN_PRIMARY_KEY],
+                        'sources': []
+                    }
                 }
 
-            if ov_type == 'string' and 'x-collibra' not in json_data[ov_name]:
-                json_data[ov_name]['x-collibra'] = {
-                    'primaryKey': row[COLUMN_PRIMARY_KEY],
-                    'sources': []
+            source_name = row[COLUMN_SOURCE_NAME]
+            if source_name:
+                source = {
+                    'sourceName': source_name,
+                    'sourceType': row[COLUMN_SOURCE_TYPE],
+                    'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
                 }
-
-            if 'x-collibra' in json_data[ov_name]:
-                source_name = row[COLUMN_SOURCE_NAME]
-                if source_name not in [s['sourceName'] for s in json_data[ov_name]['x-collibra']['sources']]:
-                    json_data[ov_name]['x-collibra']['sources'].append({
-                        'sourceName': source_name,
-                        'sourceType': row[COLUMN_SOURCE_TYPE],
-                        'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
-                    })
+                if source not in json_data[ov_name]['x-collibra']['sources']:
+                    json_data[ov_name]['x-collibra']['sources'].append(source)
         else:
             parent_name, property_name = ov_name.split('.', 1)
             if parent_name not in json_data:
@@ -53,28 +52,32 @@ def csv_to_json(csv_file_path, json_file_path):
                     'type': 'object',
                     'properties': {}
                 }
+
             if 'properties' not in json_data[parent_name]:
                 json_data[parent_name]['properties'] = {}
-            json_data[parent_name]['properties'][property_name] = {
-                'title': property_name,
-                'description': description,
-                'type': ov_type,
-            }
 
-            if ov_type == 'object' and 'x-collibra' not in json_data[parent_name]['properties'][property_name]:
-                json_data[parent_name]['properties'][property_name]['x-collibra'] = {
-                    'primaryKey': row[COLUMN_PRIMARY_KEY],
-                    'sources': []
+            if property_name not in json_data[parent_name]['properties']:
+                json_data[parent_name]['properties'][property_name] = {
+                    'title': property_name,
+                    'description': description,
+                    'type': ov_type
                 }
 
-            if 'x-collibra' in json_data[parent_name]['properties'][property_name]:
-                source_name = row[COLUMN_SOURCE_NAME]
-                if source_name not in [s['sourceName'] for s in json_data[parent_name]['properties'][property_name]['x-collibra']['sources']]:
-                    json_data[parent_name]['properties'][property_name]['x-collibra']['sources'].append({
-                        'sourceName': source_name,
-                        'sourceType': row[COLUMN_SOURCE_TYPE],
-                        'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
-                    })
+            source_name = row[COLUMN_SOURCE_NAME]
+            if source_name:
+                source = {
+                    'sourceName': source_name,
+                    'sourceType': row[COLUMN_SOURCE_TYPE],
+                    'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
+                }
+                if 'x-collibra' not in json_data[parent_name]['properties'][property_name]:
+                    json_data[parent_name]['properties'][property_name]['x-collibra'] = {
+                        'primaryKey': row[COLUMN_PRIMARY_KEY],
+                        'sources': []
+                    }
+
+                if source not in json_data[parent_name]['properties'][property_name]['x-collibra']['sources']:
+                    json_data[parent_name]['properties'][property_name]['x-collibra']['sources'].append(source)
 
     # Write the data as JSON to a file
     with open(json_file_path, 'w') as json_file:
