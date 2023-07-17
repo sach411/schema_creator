@@ -1,22 +1,79 @@
 {
-    "primeBrokerAccountNumber": {
-        "title": "primeBrokerAccountNumber",
-        "description": "Fund Prime Broker -  Account Number",
-        "type": "array",
-        "items": {
-            "description": "Fund Prime Broker -  Account Number",
-            "type": "object",
-            "properties": {}
+    "fundSFDCId": {
+        "title": "fundSFDCId",
+        "description": "Fund Id",
+        "type": "string",
+        "x-collibra": {
+            "primaryKey": "false",
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund.Fund_id_c"
+                },
+                {
+                    "sourceName": "IDR",
+                    "sourceType": "Database",
+                    "sourceAttribute": "Fund.FundId"
+                }
+            ]
         }
     },
-    "primeBrokerAccountName": {
-        "title": "primeBrokerAccountName",
-        "description": "Fund Prime Broker -  Account name",
+    "fundName": {
+        "title": "fundName",
+        "description": "Fund Name",
+        "type": "string",
+        "x-collibra": {
+            "primaryKey": "true",
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund.Fund_Legal_Name"
+                }
+            ]
+        }
+    },
+    "fundPrimeBroker": {
+        "title": "fundPrimeBroker",
+        "description": "Fund Prime Broker",
         "type": "array",
+        "uniqueItems": true,
         "items": {
-            "description": "Fund Prime Broker -  Account name",
+            "description": "Fund Prime Broker",
             "type": "object",
-            "properties": {}
+            "properties": {
+                "primeBrokerAccountNumber": {
+                    "title": "primeBrokerAccountNumber",
+                    "description": "Fund Prime Broker -  Account Number",
+                    "type": "integer",
+                    "x-collibra": {
+                        "primaryKey": false,
+                        "sources": [
+                            {
+                                "sourceName": "Salesforce Data Dictionary",
+                                "sourceType": "Service",
+                                "sourceAttribute": "FM_fund__c > primeBrokerAccountNumber"
+                            }
+                        ]
+                    }
+                },
+                "primeBrokerAccountName": {
+                    "title": "primeBrokerAccountName",
+                    "description": "Fund Prime Broker -  Account name",
+                    "type": "string",
+                    "x-collibra": {
+                        "primaryKey": true,
+                        "sources": [
+                            {
+                                "sourceName": "Salesforce Data Dictionary",
+                                "sourceType": "Service",
+                                "sourceAttribute": "FM_fund__c > primeBrokerAccountname"
+                            }
+                        ]
+                    }
+                }
+            }
         }
     }
 }
