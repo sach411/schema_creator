@@ -10,6 +10,7 @@ COLUMN_PRIMARY_KEY = 'primaryKey'
 COLUMN_SOURCE_NAME = 'sourceName'
 COLUMN_SOURCE_TYPE = 'sourceType'
 COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
+COLUMN_UNIQUEITEMS = "uniqueItems"
 
 # Define constants for JSON elements
 NODE_TITLE = 'title'
@@ -25,6 +26,7 @@ NODE_SOURCE_NAME = 'sourceName'
 NODE_SOURCE_TYPE = 'sourceType'
 NODE_SOURCE_ATTRIBUTE = 'sourceAttribute'
 NODE_OBJECT = "object"
+NODE_UNIQUEITEMS = "uniqueItems"
 
 
 def csv_to_json(csv_file_path, json_file_path):
@@ -46,13 +48,13 @@ def csv_to_json(csv_file_path, json_file_path):
         ov_name = row[COLUMN_OV_NAME]
         description = row[COLUMN_DESCRIPTION]
         ov_type = row[COLUMN_TYPE]
-        primary_key = row[COLUMN_PRIMARY_KEY]
+        primary_key = True if not pd.isna(row[COLUMN_PRIMARY_KEY]) and (row[COLUMN_PRIMARY_KEY].strip()).lower() == "true" else False
         source_name = row[COLUMN_SOURCE_NAME]
         source_type = row[COLUMN_SOURCE_TYPE]
         source_attribute = row[COLUMN_SOURCE_ATTRIBUTE]
-        pt = pd.isna(parent_tag)
-        print(f"{parent_tag} pt is na ? {pd.isna(parent_tag)}")
-
+        uniqueItems = True if not pd.isna(row[COLUMN_UNIQUEITEMS]) and row[COLUMN_UNIQUEITEMS].strip().lower()  == "true" else False
+        #pt = pd.isna(parent_tag)
+        #print(f"{parent_tag} pt is na ? {pd.isna(parent_tag)} for {ov_name}, and type: {ov_type}")
 
         if pd.isna(parent_tag) :
             if ov_name not in json_data:
@@ -63,6 +65,7 @@ def csv_to_json(csv_file_path, json_file_path):
                     NODE_TYPE: ov_type.split('.')[0]
                 }
                 if ov_type.split('.')[0] == NODE_ARRAY:
+                    json_data[ov_name][NODE_UNIQUEITEMS] = uniqueItems
                     json_data[ov_name][NODE_ITEMS] = {
                         NODE_DESCRIPTION: description,
                         NODE_TYPE: ov_type.split('.')[1],
@@ -98,3 +101,4 @@ def csv_to_json(csv_file_path, json_file_path):
 csv_file_path = 'input.csv'
 json_file_path = 'output.json'
 csv_to_json(csv_file_path, json_file_path)
+print(f"<{csv_file_path}, {json_file_path}>")
