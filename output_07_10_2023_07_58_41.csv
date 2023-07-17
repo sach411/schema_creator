@@ -1,0 +1,7 @@
+ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribute
+fundSFDCId,Fund Id,string,False,Salesforce Data Dictionary,Service,FM_fund.Fund_id_c
+fundSFDCId,Fund Id,string,False,IDR,Database,Fund.FundId
+fundName,Fund Name,string,True,Salesforce Data Dictionary,Service,FM_fund.Fund_Legal_Name
+dealingTerms,dealing Terms,object,,,,
+dealingTerms.redemptionAdvanceNoticedays,redemption Advance Noticedays,object.number,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticedays
+dealingTerms.redemptionAdvanceNoticeDayOfMonth,redemption Advance Notice DayOfMonth,object.string,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticeDayOfMonth

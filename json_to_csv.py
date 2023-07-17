@@ -1,5 +1,7 @@
 import pandas as pd
 import json
+import os
+import time
 from datetime import datetime
 
 # Define column names as constants
@@ -47,12 +49,25 @@ def json_to_csv(json_file_path, csv_file_path):
 
     # Create a backup of the existing CSV file
     backup_file_path = add_timestamp_suffix(csv_file_path)
-    df.to_csv(backup_file_path, index=False)
-    print(f"Backup created successfully: {backup_file_path}")
+    try:
+        os.rename(csv_file_path, backup_file_path)
+        print(f"CSV file renamed from '{csv_file_path}' to '{backup_file_path}' successfully.")
+    except Exception as e:
+        print(f"An error occurred while renaming the CSV file: {e}")
 
     # Write DataFrame to CSV file
     df.to_csv(csv_file_path, index=False)
-    print(f"CSV file created successfully: {csv_file_path}")
+    print("CSV file created successfully.")
+
+    # Delete backed-up CSV files older than 5 minutes
+    current_time = time.time()
+    directory = os.path.dirname(os.path.abspath(csv_file_path))
+    for filename in os.listdir(directory):
+        file_path = os.path.join(directory, filename)
+        if filename.startswith('output_') and filename.endswith('.csv'):
+            if (current_time - os.path.getmtime(file_path)) > 300:
+                os.remove(file_path)
+                print(f"Removed old backed-up CSV file: {file_path}")
 
 def add_timestamp_suffix(file_path):
     timestamp = datetime.now().strftime('%m_%d_%Y_%H_%M_%S')

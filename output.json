@@ -1,69 +1,22 @@
 {
- "fundSFDCId": {
-  "description": "Fund Id",
-  "type": "string",
-  "x-collibra": {
-   "primaryKey": false,
-   "sources": [
-    {
-     "sourceName": "Salesforce Data Dictionary",
-     "sourceType": "Service",
-     "sourceAttribute": "FM_fund.Fund_id_c"
+    "primeBrokerAccountNumber": {
+        "title": "primeBrokerAccountNumber",
+        "description": "Fund Prime Broker -  Account Number",
+        "type": "array",
+        "items": {
+            "description": "Fund Prime Broker -  Account Number",
+            "type": "object",
+            "properties": {}
+        }
     },
-    {
-     "sourceName": "IDR",
-     "sourceType": "Database",
-     "sourceAttribute": "Fund.FundId"
+    "primeBrokerAccountName": {
+        "title": "primeBrokerAccountName",
+        "description": "Fund Prime Broker -  Account name",
+        "type": "array",
+        "items": {
+            "description": "Fund Prime Broker -  Account name",
+            "type": "object",
+            "properties": {}
+        }
     }
-   ]
-  }
- },
- "fundName": {
-  "description": "Fund Name",
-  "type": "string",
-  "x-collibra": {
-   "primaryKey": true,
-   "sources": [
-    {
-     "sourceName": "Salesforce Data Dictionary",
-     "sourceType": "Service",
-     "sourceAttribute": "FM_fund.Fund_Legal_Name"
-    }
-   ]
-  }
- },
- "dealingTerms": {
-  "description": "dealing Terms",
-  "type": "object",
-  "properties": {
-   "redemptionAdvanceNoticedays": {
-    "description": "redemption Advance Noticedays",
-    "type": "number",
-    "x-collibra": {
-     "primaryKey": false,
-     "sources": [
-      {
-       "sourceName": "Salesforce Data Dictionary",
-       "sourceType": "Service",
-       "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
-      }
-     ]
-    }
-   },
-   "redemptionAdvanceNoticeDayOfMonth": {
-    "description": "redemption Advance Notice DayOfMonth",
-    "type": "string",
-    "x-collibra": {
-     "primaryKey": false,
-     "sources": [
-      {
-       "sourceName": "Salesforce Data Dictionary",
-       "sourceType": "Service",
-       "sourceAttribute": "FM_fund.redemptionAdvanceNoticeDayOfMonth"
-      }
-     ]
-    }
-   }
-  }
- }
 }

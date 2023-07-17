@@ -1,0 +1,74 @@
+{
+    "fundSFDCId": {
+        "title": "fundSFDCId",
+        "description": "Fund Id",
+        "type": "string",
+        "x-collibra": {
+            "primaryKey": false,
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund.Fund_id_c"
+                },
+                {
+                    "sourceName": "IDR",
+                    "sourceType": "Database",
+                    "sourceAttribute": "Fund.FundId"
+                }
+            ]
+        }
+    },
+    "fundName": {
+        "title": "fundName",
+        "description": "Fund Name",
+        "type": "string",
+        "x-collibra": {
+            "primaryKey": true,
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund.Fund_Legal_Name"
+                }
+            ]
+        }
+    },
+    "dealingTerms": {
+        "title": "dealingTerms",
+        "description": "dealing Terms",
+        "type": "object",
+        "properties": {
+            "redemptionAdvanceNoticedays": {
+                "title": "redemptionAdvanceNoticedays",
+                "description": "redemption Advance Noticedays",
+                "type": "object.number",
+                "x-collibra": {
+                    "primaryKey": false,
+                    "sources": [
+                        {
+                            "sourceName": "Salesforce Data Dictionary",
+                            "sourceType": "Service",
+                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
+                        }
+                    ]
+                }
+            },
+            "redemptionAdvanceNoticeDayOfMonth": {
+                "title": "redemptionAdvanceNoticeDayOfMonth",
+                "description": "redemption Advance Notice DayOfMonth",
+                "type": "object.string",
+                "x-collibra": {
+                    "primaryKey": false,
+                    "sources": [
+                        {
+                            "sourceName": "Salesforce Data Dictionary",
+                            "sourceType": "Service",
+                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticeDayOfMonth"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,4 @@
+"ovName","description","type","primaryKey","sourceName","sourceType","sourceAttribute"
+"fundPrimeBroker","Fund Prime Broker","array.object.unique","","","",""
+"fundPrimeBroker.primeBrokerAccountNumber","Fund Prime Broker -  Account Number","integer","false","Salesforce Data Dictionary","Service","FM_fund__c > primeBrokerAccountNumber"
+"fundPrimeBroker.primeBrokerAccountName","Fund Prime Broker -  Account name","string","false","Salesforce Data Dictionary","Service","FM_fund__c > primeBrokerAccountname"
