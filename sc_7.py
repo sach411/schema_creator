@@ -78,12 +78,12 @@ def csv_to_json(csv_file_path, json_file_path):
                     if not pd.isna(source_name):
                         source = {
                             'sourceName': source_name,
-                            'sourceType': row[COLUMN_SOURCE_TYPE],
-                            'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
+                            'sourceType': source_type,
+                            'sourceAttribute': source_attribute
                         }
                     if NODE_X_COLLIBRA not in json_data[ov_name]:
                         json_data[ov_name][NODE_X_COLLIBRA] = {
-                            'primaryKey': row[COLUMN_PRIMARY_KEY],
+                            'primaryKey': primary_key,
                             'sources': []
                          }
                     if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
@@ -94,12 +94,12 @@ def csv_to_json(csv_file_path, json_file_path):
                     if not pd.isna(source_name):
                         source = {
                             'sourceName': source_name,
-                            'sourceType': row[COLUMN_SOURCE_TYPE],
-                            'sourceAttribute': row[COLUMN_SOURCE_ATTRIBUTE]
+                            'sourceType': source_type,
+                            'sourceAttribute': source_attribute
                         }
                     if NODE_X_COLLIBRA not in json_data[ov_name]:
                         json_data[ov_name][NODE_X_COLLIBRA] = {
-                            'primaryKey': row[COLUMN_PRIMARY_KEY],
+                            'primaryKey': primary_key,
                             'sources': []
                          }
                     if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:

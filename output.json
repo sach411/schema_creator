@@ -4,7 +4,7 @@
         "description": "Fund Id",
         "type": "string",
         "x-collibra": {
-            "primaryKey": "false",
+            "primaryKey": false,
             "sources": [
                 {
                     "sourceName": "Salesforce Data Dictionary",
@@ -24,7 +24,7 @@
         "description": "Fund Name",
         "type": "string",
         "x-collibra": {
-            "primaryKey": "true",
+            "primaryKey": true,
             "sources": [
                 {
                     "sourceName": "Salesforce Data Dictionary",
