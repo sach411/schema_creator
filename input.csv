@@ -1,4 +1,7 @@
 "parentTag","ovName","description","type","primaryKey","sourceName","sourceType","sourceAttribute","uniqueItems"
+"","dealingTerms","dealing Terms","object","","","","",""
+"dealingTerms","redemptionAdvanceNoticedays","redemption Advance Noticedays","number","false","Salesforce Data Dictionary","Service","FM_fund.redemptionAdvanceNoticedays",""
+"dealingTerms","redemptionAdvanceNoticeDayOfMonth","redemption Advance Notice DayOfMonth","string","false","Salesforce Data Dictionary","Service","FM_fund.redemptionAdvanceNoticeDayOfMonth",""
 "","fundSFDCId","Fund Id","string","false","Salesforce Data Dictionary","Service","FM_fund.Fund_id_c",""
 "","fundSFDCId","Fund Id","string","false","IDR","Database","Fund.FundId",""
 "","fundName","Fund Name","string","true","Salesforce Data Dictionary","Service","FM_fund.Fund_Legal_Name",""

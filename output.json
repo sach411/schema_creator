@@ -1,4 +1,41 @@
 {
+    "dealingTerms": {
+        "title": "dealingTerms",
+        "description": "dealing Terms",
+        "type": "object",
+        "properties": {
+            "redemptionAdvanceNoticedays": {
+                "title": "redemptionAdvanceNoticedays",
+                "description": "redemption Advance Noticedays",
+                "type": "number",
+                "x-collibra": {
+                    "primaryKey": false,
+                    "sources": [
+                        {
+                            "sourceName": "Salesforce Data Dictionary",
+                            "sourceType": "Service",
+                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
+                        }
+                    ]
+                }
+            },
+            "redemptionAdvanceNoticeDayOfMonth": {
+                "title": "redemptionAdvanceNoticeDayOfMonth",
+                "description": "redemption Advance Notice DayOfMonth",
+                "type": "string",
+                "x-collibra": {
+                    "primaryKey": false,
+                    "sources": [
+                        {
+                            "sourceName": "Salesforce Data Dictionary",
+                            "sourceType": "Service",
+                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticeDayOfMonth"
+                        }
+                    ]
+                }
+            }
+        }
+    },
     "fundSFDCId": {
         "title": "fundSFDCId",
         "description": "Fund Id",
