@@ -51,7 +51,11 @@ def csv_to_json(csv_file_path, json_file_path):
         description = row[COLUMN_DESCRIPTION]
         ov_type = row[COLUMN_TYPE]
         # actual type of the ov node
-        ov_node_type = ov_type.split('.')[0]
+        ovnt = ov_type.split('.')
+        ov_node_type = ovnt[0]
+        # for array, subtype can be object or basic types
+        if len(ovnt) == 2:
+            ov_node_subtype = ovnt[1]
         primary_key = True if not pd.isna(row[COLUMN_PRIMARY_KEY]) and (row[COLUMN_PRIMARY_KEY].strip()).lower() == "true" else False
         source_name = row[COLUMN_SOURCE_NAME]
         source_type = row[COLUMN_SOURCE_TYPE]
@@ -73,10 +77,28 @@ def csv_to_json(csv_file_path, json_file_path):
                 if ov_node_type == NODE_ARRAY:
                     json_data[ov_name][NODE_UNIQUEITEMS] = uniqueItems
                     json_data[ov_name][NODE_ITEMS] = {
+                        NODE_TITLE : ov_name,
                         NODE_DESCRIPTION: description,
-                        NODE_TYPE: ov_type.split('.')[1],
-                        NODE_PROPERTIES: {}
+                        NODE_TYPE: ov_type.split('.')[1]
                     }
+                    if ov_node_subtype not in BASIC_TYPES:
+                        json_data[ov_name][NODE_ITEMS][NODE_PROPERTIES]= {}
+                    else:
+                        # add x-collibra node for array of basic type
+                        if not pd.isna(source_name):
+                            source = {
+                                'sourceName': source_name,
+                                'sourceType': source_type,
+                                'sourceAttribute': source_attribute
+                            }
+                        if NODE_X_COLLIBRA not in json_data[ov_name]:
+                            json_data[ov_name][NODE_X_COLLIBRA] = {
+                                'primaryKey': primary_key,
+                                'sources': []
+                            }
+                        if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
+                            json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
+
                 elif ov_node_type in BASIC_TYPES:
                     if not pd.isna(source_name):
                         source = {

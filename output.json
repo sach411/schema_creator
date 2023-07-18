@@ -1,4 +1,25 @@
 {
+    "distributionPolicy": {
+        "title": "distributionPolicy",
+        "description": "distribution policy",
+        "type": "array",
+        "uniqueItems": true,
+        "items": {
+            "title": "distributionPolicy",
+            "description": "distribution policy",
+            "type": "string"
+        },
+        "x-collibra": {
+            "primaryKey": false,
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund__c > distributionPolicy"
+                }
+            ]
+        }
+    },
     "dealingTerms": {
         "title": "dealingTerms",
         "description": "dealing Terms",
@@ -77,6 +98,7 @@
         "type": "array",
         "uniqueItems": true,
         "items": {
+            "title": "fundPrimeBroker",
             "description": "Fund Prime Broker",
             "type": "object",
             "properties": {
