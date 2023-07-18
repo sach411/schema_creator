@@ -45,6 +45,7 @@ def csv_to_json(csv_file_path, json_file_path):
 
     # Iterate over each row in the DataFrame
     for _, row in df.iterrows():
+        #print(f"{_}")
         parent_tag = row[COLUMN_PARENT_TAG]
         ov_name = row[COLUMN_OV_NAME]
         description = row[COLUMN_DESCRIPTION]
@@ -67,6 +68,8 @@ def csv_to_json(csv_file_path, json_file_path):
                     NODE_DESCRIPTION: description,
                     NODE_TYPE: ov_node_type
                 }
+                if ov_node_type == NODE_OBJECT:
+                    json_data[ov_name][NODE_PROPERTIES] = {}
                 if ov_node_type == NODE_ARRAY:
                     json_data[ov_name][NODE_UNIQUEITEMS] = uniqueItems
                     json_data[ov_name][NODE_ITEMS] = {
@@ -89,7 +92,7 @@ def csv_to_json(csv_file_path, json_file_path):
                     if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
                         json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
             else:
-                print(f" {ov_name} is in {json_data}")
+                #print(f" {ov_name} is in {json_data}")
                 if ov_node_type in BASIC_TYPES:
                     if not pd.isna(source_name):
                         source = {
@@ -110,7 +113,7 @@ def csv_to_json(csv_file_path, json_file_path):
             parent_tag_str = str(parent_tag)
             if parent_tag_str in json_data:
                 parent_node = json_data[parent_tag_str]
-                parent_properties = parent_node[NODE_ITEMS][NODE_PROPERTIES]
+                parent_properties = parent_node[NODE_ITEMS][NODE_PROPERTIES] if parent_node[NODE_TYPE] == NODE_ARRAY else parent_node[NODE_PROPERTIES]
                 parent_properties[ov_name] = {
                     NODE_TITLE: ov_name,
                     NODE_DESCRIPTION: description,
