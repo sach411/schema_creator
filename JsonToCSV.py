@@ -68,6 +68,7 @@ class JsonToCSVConverter:
 
             elif NODE_ITEMS in node:
                 # If it's an array node, process its items recursively
+                # add first row before iterating
                 row = {
                     COLUMN_PARENT_TAG: parent_tag_str,
                     COLUMN_OV_NAME: title,

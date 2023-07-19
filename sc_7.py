@@ -54,6 +54,7 @@ def csv_to_json(csv_file_path, json_file_path):
         ovnt = ov_type.split('.')
         ov_node_type = ovnt[0]
         # for array, subtype can be object or basic types
+        ov_node_subtype = ""
         if len(ovnt) == 2:
             ov_node_subtype = ovnt[1]
         primary_key = True if not pd.isna(row[COLUMN_PRIMARY_KEY]) and (row[COLUMN_PRIMARY_KEY].strip()).lower() == "true" else False
