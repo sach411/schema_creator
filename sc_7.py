@@ -155,10 +155,10 @@ def csv_to_json(csv_file_path, json_file_path):
     with open(json_file_path, 'w') as json_file:
         json.dump(json_data, json_file, indent=4)
 
-    print(f"CSV to JSON conversion completed. Output file: {json_file_path}")
+    print(f"CSV to JSON conversion completed. {csv_file_path} --> {json_file_path}")
 
 # Example usage
-csv_file_path = 'input.csv'
-json_file_path = 'output.json'
+csv_file_path = 'c2j.csv'
+json_file_path = 'c2j.json'
 csv_to_json(csv_file_path, json_file_path)
 print(f"<{csv_file_path}, {json_file_path}>")

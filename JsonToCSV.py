@@ -60,17 +60,17 @@ def process_json_node(node, parent_tag="", is_array=False, node_key=None):
     # If the node has properties, process them recursively
     if NODE_PROPERTIES in node:
         for prop_name, prop_node in node[NODE_PROPERTIES].items():
-            process_json_node(prop_node, title)
+            process_json_node(prop_node, parent_tag=node_key, node_key=prop_name)
 
     # If it's an array node, process its items recursively
     if NODE_ITEMS in node:
         if node_type == NODE_ARRAY:
-            if NODE_PROPERTIES in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
-                process_json_node(node[NODE_ITEMS], parent_tag, is_array=True)
+            if NODE_PROPERTIES not in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
+                process_json_node(node[NODE_ITEMS], parent_tag, is_array=True, node_key=node_key)
             else:
-                process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], parent_tag, is_array=True)
+                process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], parent_tag, is_array=True, node_key=node_key)
         else:
-            process_json_node(node[NODE_ITEMS], parent_tag)
+            process_json_node(node=node[NODE_ITEMS], parent_tag=parent_tag, node_key=node_key)
 
 # Read the JSON data from the file
 with open(json_file_path, 'r') as json_file:
