@@ -1,18 +1,18 @@
 import pandas as pd
 import json
 
-# Constants for column headers in the CSV file
-COL_PARENT_TAG = 'parentTag'
-COL_OV_NAME = 'ovName'
-COL_DESCRIPTION = 'description'
-COL_TYPE = 'type'
-COL_PRIMARY_KEY = 'primaryKey'
-COL_SOURCE_NAME = 'sourceName'
-COL_SOURCE_TYPE = 'sourceType'
-COL_SOURCE_ATTRIBUTE = 'sourceAttribute'
-COL_UNIQUE_ITEMS = 'uniqueItems'
+# Define constants for column names
+COLUMN_PARENT_TAG = 'parentTag'
+COLUMN_OV_NAME = 'ovName'
+COLUMN_DESCRIPTION = 'description'
+COLUMN_TYPE = 'type'
+COLUMN_PRIMARY_KEY = 'primaryKey'
+COLUMN_SOURCE_NAME = 'sourceName'
+COLUMN_SOURCE_TYPE = 'sourceType'
+COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
+COLUMN_UNIQUEITEMS = "uniqueItems"
 
-# Constants for JSON nodes
+# Define constants for JSON elements
 NODE_TITLE = 'title'
 NODE_DESCRIPTION = 'description'
 NODE_TYPE = 'type'
@@ -25,30 +25,31 @@ NODE_SOURCES = 'sources'
 NODE_SOURCE_NAME = 'sourceName'
 NODE_SOURCE_TYPE = 'sourceType'
 NODE_SOURCE_ATTRIBUTE = 'sourceAttribute'
-NODE_OBJECT = 'object'
-NODE_STRING = 'string'
-NODE_NUMBER = 'number'
+NODE_OBJECT = "object"
+NODE_UNIQUEITEMS = "uniqueItems"
+BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
+COMPLEX_TYPE = ["array", "object"]
 
 def process_json_node(node, parent_tag="", is_array=False):
     title = node.get(NODE_TITLE, '')
     description = node.get(NODE_DESCRIPTION, '')
     node_type = node.get(NODE_TYPE, '')
-    unique_items = node.get(COL_UNIQUE_ITEMS, '')
+    unique_items = node.get(COLUMN_UNIQUEITEMS, '')
     primary_key = node.get(NODE_X_COLLIBRA, {}).get(NODE_PRIMARY_KEY, '')
     sources = node.get(NODE_X_COLLIBRA, {}).get(NODE_SOURCES, [])
 
     # If it's an object or array node, add it as a row in the CSV
     if not is_array:
         row = {
-            COL_PARENT_TAG: parent_tag,
-            COL_OV_NAME: title,
-            COL_DESCRIPTION: description,
-            COL_TYPE: node_type,
-            COL_PRIMARY_KEY: primary_key,
-            COL_UNIQUE_ITEMS: unique_items,
-            COL_SOURCE_NAME: sources[0][NODE_SOURCE_NAME] if sources else '',
-            COL_SOURCE_TYPE: sources[0][NODE_SOURCE_TYPE] if sources else '',
-            COL_SOURCE_ATTRIBUTE: sources[0][NODE_SOURCE_ATTRIBUTE] if sources else ''
+            COLUMN_PARENT_TAG: parent_tag,
+            COLUMN_OV_NAME: title,
+            COLUMN_DESCRIPTION: description,
+            COLUMN_TYPE: node_type,
+            COLUMN_PRIMARY_KEY: primary_key,
+            COLUMN_UNIQUEITEMS: unique_items,
+            COLUMN_SOURCE_NAME: sources[0][NODE_SOURCE_NAME] if sources else '',
+            COLUMN_SOURCE_TYPE: sources[0][NODE_SOURCE_TYPE] if sources else '',
+            COLUMN_SOURCE_ATTRIBUTE: sources[0][NODE_SOURCE_ATTRIBUTE] if sources else ''
         }
         csv_rows.append(row)
 
@@ -68,7 +69,7 @@ def process_json_node(node, parent_tag="", is_array=False):
             process_json_node(node[NODE_ITEMS], parent_tag)
 
 # Read the JSON data from the file
-with open('input.json', 'r') as json_file:
+with open('output.json', 'r') as json_file:
     json_data = json.load(json_file)
 
 # Initialize an empty list to store the rows for the CSV
@@ -83,8 +84,8 @@ csv_df = pd.DataFrame(csv_rows)
 
 # Reorder columns to match the output.csv format
 csv_df = csv_df[[
-    COL_PARENT_TAG, COL_OV_NAME, COL_DESCRIPTION, COL_TYPE, COL_PRIMARY_KEY, COL_SOURCE_NAME,
-    COL_SOURCE_TYPE, COL_SOURCE_ATTRIBUTE, COL_UNIQUE_ITEMS
+    COLUMN_PARENT_TAG, COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME,
+    COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE, COLUMN_UNIQUEITEMS
 ]]
 
 # Write the DataFrame to a CSV file
