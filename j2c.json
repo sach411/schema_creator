@@ -1,23 +1,7 @@
 {
     "fundSFDCId": {
-        "title": "fundSFDCId",
-        "description": "Fund Id",
         "type": "string",
-        "x-collibra": {
-            "primaryKey": false,
-            "sources": [
-                {
-                    "sourceName": "Salesforce Data Dictionary",
-                    "sourceType": "Service",
-                    "sourceAttribute": "FM_fund.Fund_id_c"
-                },
-                {
-                    "sourceName": "IDR",
-                    "sourceType": "Database",
-                    "sourceAttribute": "Fund.FundId"
-                }
-            ]
-        }
+        "description": "fund sfdc id"
     },
     "fundName": {
         "title": "fundName",

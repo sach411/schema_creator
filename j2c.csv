@@ -1,0 +1,6 @@
+parentTag,ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribute,uniqueItems
+,fundSFDCId,fund sfdc id,string,,,,,
+,fundName,Fund Name,string,True,Salesforce Data Dictionary,Service,FM_fund.Fund_Legal_Name,
+,dealingTerms,dealing Terms,object,,,,,
+dealingTerms,,redemption Advance Noticedays,object.number,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticedays,
+dealingTerms,,redemption Advance Notice DayOfMonth,object.string,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticeDayOfMonth,

@@ -30,7 +30,11 @@ NODE_UNIQUEITEMS = "uniqueItems"
 BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
 COMPLEX_TYPE = ["array", "object"]
 
-def process_json_node(node, parent_tag="", is_array=False):
+csv_file_path = "j2c.csv"
+json_file_path = "j2c.json"
+
+def process_json_node(node, parent_tag="", is_array=False, node_key=None):
+
     title = node.get(NODE_TITLE, '')
     description = node.get(NODE_DESCRIPTION, '')
     node_type = node.get(NODE_TYPE, '')
@@ -42,7 +46,7 @@ def process_json_node(node, parent_tag="", is_array=False):
     if not is_array:
         row = {
             COLUMN_PARENT_TAG: parent_tag,
-            COLUMN_OV_NAME: title,
+            COLUMN_OV_NAME: node_key,
             COLUMN_DESCRIPTION: description,
             COLUMN_TYPE: node_type,
             COLUMN_PRIMARY_KEY: primary_key,
@@ -69,7 +73,7 @@ def process_json_node(node, parent_tag="", is_array=False):
             process_json_node(node[NODE_ITEMS], parent_tag)
 
 # Read the JSON data from the file
-with open('output.json', 'r') as json_file:
+with open(json_file_path, 'r') as json_file:
     json_data = json.load(json_file)
 
 # Initialize an empty list to store the rows for the CSV
@@ -77,7 +81,7 @@ csv_rows = []
 
 # Process the JSON data recursively
 for node_key in json_data.keys():
-    process_json_node(json_data[node_key])
+    process_json_node(node=json_data[node_key],node_key=node_key)
 
 # Convert the list of CSV rows to a DataFrame
 csv_df = pd.DataFrame(csv_rows)
@@ -89,5 +93,5 @@ csv_df = csv_df[[
 ]]
 
 # Write the DataFrame to a CSV file
-csv_df.to_csv('output.csv', index=False)
-print("JSON to CSV conversion completed.")
+csv_df.to_csv(csv_file_path, index=False)
+print(f"JSON to CSV conversion completed. {json_file_path} --> {csv_file_path}")

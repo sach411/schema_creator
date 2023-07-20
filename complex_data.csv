@@ -1,0 +1,3 @@
+Name,Address,Details
+John Doe,"{""Street"": ""123 Main St"", ""City"": ""Anytown"", ""State"": ""CA""}","{""Age"": 35, ""Interests"": [""Hiking"", ""Reading""]}"
+Jane Smith,"{""Street"": ""456 Park Ave"", ""City"": ""Othertown"", ""State"": ""NY""}","{""Age"": 42, ""Interests"": [""Swimming"", ""Cooking"", ""Photography""]}"
