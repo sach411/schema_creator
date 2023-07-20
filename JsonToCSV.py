@@ -29,7 +29,7 @@ NODE_OBJECT = 'object'
 NODE_STRING = 'string'
 NODE_NUMBER = 'number'
 
-def process_json_node(node, parent_tag=""):
+def process_json_node(node, parent_tag="", is_array=False):
     title = node.get(NODE_TITLE, '')
     description = node.get(NODE_DESCRIPTION, '')
     node_type = node.get(NODE_TYPE, '')
@@ -37,19 +37,20 @@ def process_json_node(node, parent_tag=""):
     primary_key = node.get(NODE_X_COLLIBRA, {}).get(NODE_PRIMARY_KEY, '')
     sources = node.get(NODE_X_COLLIBRA, {}).get(NODE_SOURCES, [])
 
-    # If it's an object node, add it as a row in the CSV
-    row = {
-        COL_PARENT_TAG: parent_tag,
-        COL_OV_NAME: title,
-        COL_DESCRIPTION: description,
-        COL_TYPE: node_type,
-        COL_PRIMARY_KEY: primary_key,
-        COL_UNIQUE_ITEMS: unique_items,
-        COL_SOURCE_NAME: sources[0][NODE_SOURCE_NAME] if sources else '',
-        COL_SOURCE_TYPE: sources[0][NODE_SOURCE_TYPE] if sources else '',
-        COL_SOURCE_ATTRIBUTE: sources[0][NODE_SOURCE_ATTRIBUTE] if sources else ''
-    }
-    csv_rows.append(row)
+    # If it's an object or array node, add it as a row in the CSV
+    if not is_array:
+        row = {
+            COL_PARENT_TAG: parent_tag,
+            COL_OV_NAME: title,
+            COL_DESCRIPTION: description,
+            COL_TYPE: node_type,
+            COL_PRIMARY_KEY: primary_key,
+            COL_UNIQUE_ITEMS: unique_items,
+            COL_SOURCE_NAME: sources[0][NODE_SOURCE_NAME] if sources else '',
+            COL_SOURCE_TYPE: sources[0][NODE_SOURCE_TYPE] if sources else '',
+            COL_SOURCE_ATTRIBUTE: sources[0][NODE_SOURCE_ATTRIBUTE] if sources else ''
+        }
+        csv_rows.append(row)
 
     # If the node has properties, process them recursively
     if NODE_PROPERTIES in node:
@@ -59,12 +60,12 @@ def process_json_node(node, parent_tag=""):
     # If it's an array node, process its items recursively
     if NODE_ITEMS in node:
         if node_type == NODE_ARRAY:
-            if NODE_ITEMS in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
-                process_json_node(node[NODE_ITEMS], title)
+            if NODE_PROPERTIES in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
+                process_json_node(node[NODE_ITEMS], parent_tag, is_array=True)
             else:
-                process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], title)
+                process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], parent_tag, is_array=True)
         else:
-            process_json_node(node[NODE_ITEMS], title)
+            process_json_node(node[NODE_ITEMS], parent_tag)
 
 # Read the JSON data from the file
 with open('input.json', 'r') as json_file:
