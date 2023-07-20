@@ -66,7 +66,7 @@ def process_json_node(node, parent_tag="", is_array=False, node_key=None):
     if NODE_ITEMS in node:
         if node_type == NODE_ARRAY:
             if NODE_PROPERTIES not in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
-                process_json_node(node[NODE_ITEMS], parent_tag, is_array=True, node_key=node_key)
+                process_json_node(node=node[NODE_ITEMS], parent_tag=parent_tag, is_array=True, node_key=node_key)
             else:
                 process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], parent_tag, is_array=True, node_key=node_key)
         else:
