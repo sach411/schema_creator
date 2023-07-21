@@ -48,12 +48,13 @@ def csv_to_json(csv_file_path, json_file_path):
     records_to_process = int(os.getenv('n', -1))
     if records_to_process > 0:
         df = df.head(records_to_process)
+
     # Iterate over each row in the DataFrame
     for _, row in df.iterrows():
         #print(f"{_}")
         parent_tag = row[COLUMN_PARENT_TAG]
         ov_name = row[COLUMN_OV_NAME]
-        description = row[COLUMN_DESCRIPTION]
+        description = row[COLUMN_DESCRIPTION].strip() if not pd.isna(row[COLUMN_DESCRIPTION]) else ""
         ov_type = row[COLUMN_TYPE]
         # actual type of the ov node
         ovnt = ov_type.split('.')
@@ -63,12 +64,10 @@ def csv_to_json(csv_file_path, json_file_path):
         if len(ovnt) == 2:
             ov_node_subtype = ovnt[1]
         primary_key = True if not pd.isna(row[COLUMN_PRIMARY_KEY]) and (row[COLUMN_PRIMARY_KEY].strip()).lower() == "true" else False
-        source_name = row[COLUMN_SOURCE_NAME]
-        source_type = row[COLUMN_SOURCE_TYPE]
-        source_attribute = row[COLUMN_SOURCE_ATTRIBUTE]
+        source_name = row[COLUMN_SOURCE_NAME].strip() if not pd.isna(row[COLUMN_SOURCE_NAME]) else row[COLUMN_SOURCE_NAME]
+        source_type = row[COLUMN_SOURCE_TYPE].strip() if not pd.isna(row[COLUMN_SOURCE_TYPE]) else row[COLUMN_SOURCE_TYPE]
+        source_attribute = row[COLUMN_SOURCE_ATTRIBUTE].strip() if not pd.isna(row[COLUMN_SOURCE_ATTRIBUTE]) else row[COLUMN_SOURCE_ATTRIBUTE]
         uniqueItems = True if not pd.isna(row[COLUMN_UNIQUEITEMS]) and row[COLUMN_UNIQUEITEMS].strip().lower()  == "true" else False
-        #pt = pd.isna(parent_tag)
-        #print(f"{parent_tag} pt is na ? {pd.isna(parent_tag)} for {ov_name}, and type: {ov_type}")
 
         if pd.isna(parent_tag) :
             if ov_name not in json_data:
@@ -87,7 +86,7 @@ def csv_to_json(csv_file_path, json_file_path):
                         NODE_DESCRIPTION: description,
                         NODE_TYPE: ov_type.split('.')[1]
                     }
-                    if ov_node_subtype not in BASIC_TYPES:
+                    if not pd.isna(ov_node_subtype) and ov_node_subtype not in BASIC_TYPES:
                         json_data[ov_name][NODE_ITEMS][NODE_PROPERTIES]= {}
                     else:
                         # add x-collibra node for array of basic type
