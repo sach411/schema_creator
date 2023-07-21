@@ -1,3 +1,5 @@
+import os
+
 import pandas as pd
 import json
 
@@ -43,6 +45,9 @@ def csv_to_json(csv_file_path, json_file_path):
     # Create a dictionary to store the JSON data
     json_data = {}
 
+    records_to_process = int(os.getenv('n', -1))
+    if records_to_process > 0:
+        df = df.head(records_to_process)
     # Iterate over each row in the DataFrame
     for _, row in df.iterrows():
         #print(f"{_}")
@@ -101,19 +106,20 @@ def csv_to_json(csv_file_path, json_file_path):
                             json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
 
                 elif ov_node_type in BASIC_TYPES:
+                    # add x-collibra only if source is present in csv row
                     if not pd.isna(source_name):
                         source = {
                             'sourceName': source_name,
                             'sourceType': source_type,
                             'sourceAttribute': source_attribute
                         }
-                    if NODE_X_COLLIBRA not in json_data[ov_name]:
-                        json_data[ov_name][NODE_X_COLLIBRA] = {
-                            'primaryKey': primary_key,
-                            'sources': []
-                         }
-                    if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
-                        json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
+                        if NODE_X_COLLIBRA not in json_data[ov_name]:
+                            json_data[ov_name][NODE_X_COLLIBRA] = {
+                                'primaryKey': primary_key,
+                                'sources': []
+                             }
+                        if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
+                            json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
             else:
                 #print(f" {ov_name} is in {json_data}")
                 if ov_node_type in BASIC_TYPES:
