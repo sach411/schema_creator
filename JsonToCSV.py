@@ -1,7 +1,7 @@
 import pandas as pd
 import json
 
-# Define constants for column names
+# Constants for column names
 COLUMN_PARENT_TAG = 'parentTag'
 COLUMN_OV_NAME = 'ovName'
 COLUMN_DESCRIPTION = 'description'
@@ -10,88 +10,41 @@ COLUMN_PRIMARY_KEY = 'primaryKey'
 COLUMN_SOURCE_NAME = 'sourceName'
 COLUMN_SOURCE_TYPE = 'sourceType'
 COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
-COLUMN_UNIQUEITEMS = "uniqueItems"
+COLUMN_UNIQUE_ITEMS = 'uniqueItems'
 
-# Define constants for JSON elements
-NODE_TITLE = 'title'
-NODE_DESCRIPTION = 'description'
-NODE_TYPE = 'type'
-NODE_ARRAY = 'array'
-NODE_ITEMS = 'items'
-NODE_PROPERTIES = 'properties'
-NODE_X_COLLIBRA = 'x-collibra'
-NODE_PRIMARY_KEY = 'primaryKey'
-NODE_SOURCES = 'sources'
-NODE_SOURCE_NAME = 'sourceName'
-NODE_SOURCE_TYPE = 'sourceType'
-NODE_SOURCE_ATTRIBUTE = 'sourceAttribute'
-NODE_OBJECT = "object"
-NODE_UNIQUEITEMS = "uniqueItems"
-BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
-COMPLEX_TYPE = ["array", "object"]
+# File names
+input_file = 'j2c.json'
+output_file = 'j2c_temp.csv'
 
-csv_file_path = "j2c.csv"
-json_file_path = "j2c.json"
-
-def process_json_node(node, parent_tag="", is_array=False, node_key=None):
-
-    title = node.get(NODE_TITLE, '')
-    description = node.get(NODE_DESCRIPTION, '')
-    node_type = node.get(NODE_TYPE, '')
-    unique_items = node.get(COLUMN_UNIQUEITEMS, '')
-    primary_key = node.get(NODE_X_COLLIBRA, {}).get(NODE_PRIMARY_KEY, '')
-    sources = node.get(NODE_X_COLLIBRA, {}).get(NODE_SOURCES, [])
-
-    # If it's an object or array node, add it as a row in the CSV
-    if not is_array:
-        row = {
-            COLUMN_PARENT_TAG: parent_tag,
-            COLUMN_OV_NAME: node_key,
-            COLUMN_DESCRIPTION: description,
-            COLUMN_TYPE: node_type,
-            COLUMN_PRIMARY_KEY: primary_key,
-            COLUMN_UNIQUEITEMS: unique_items,
-            COLUMN_SOURCE_NAME: sources[0][NODE_SOURCE_NAME] if sources else '',
-            COLUMN_SOURCE_TYPE: sources[0][NODE_SOURCE_TYPE] if sources else '',
-            COLUMN_SOURCE_ATTRIBUTE: sources[0][NODE_SOURCE_ATTRIBUTE] if sources else ''
-        }
-        csv_rows.append(row)
-
-    # If the node has properties, process them recursively
-    if NODE_PROPERTIES in node:
-        for prop_name, prop_node in node[NODE_PROPERTIES].items():
-            process_json_node(prop_node, parent_tag=node_key, node_key=prop_name)
-
-    # If it's an array node, process its items recursively
-    if NODE_ITEMS in node:
-        if node_type == NODE_ARRAY:
-            if NODE_PROPERTIES not in node[NODE_ITEMS]:  # To handle "distributionPolicy" case
-                process_json_node(node=node[NODE_ITEMS], parent_tag=parent_tag, is_array=True, node_key=node_key)
+# Function to flatten the nested JSON and extract the required data
+def flatten_json(json_obj, parent_tag=''):
+    result = []
+    if isinstance(json_obj, dict):
+        for key, value in json_obj.items():
+            new_tag = f"{parent_tag},{key}" if parent_tag else key
+            if isinstance(value, dict):
+                result.extend(flatten_json(value, new_tag))
+            elif isinstance(value, list):
+                result.append((new_tag, value))
             else:
-                process_json_node(node[NODE_ITEMS][NODE_PROPERTIES], parent_tag, is_array=True, node_key=node_key)
-        else:
-            process_json_node(node=node[NODE_ITEMS], parent_tag=parent_tag, node_key=node_key)
+                result.append((new_tag, value))
+    elif isinstance(json_obj, list):
+        for item in json_obj:
+            result.extend(flatten_json(item, parent_tag))
+    return result
 
-# Read the JSON data from the file
-with open(json_file_path, 'r') as json_file:
-    json_data = json.load(json_file)
+# Read the input JSON
+with open(input_file, 'r') as file:
+    input_data = file.read()
 
-# Initialize an empty list to store the rows for the CSV
-csv_rows = []
+# Load the input JSON
+input_json = json.loads(input_data)
 
-# Process the JSON data recursively
-for node_key in json_data.keys():
-    process_json_node(node=json_data[node_key],node_key=node_key)
+# Flatten the JSON and convert to DataFrame
+flatten_data = flatten_json(input_json)
+df = pd.DataFrame(flatten_data, columns=[COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY,
+                                          COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE,
+                                          COLUMN_UNIQUE_ITEMS])
 
-# Convert the list of CSV rows to a DataFrame
-csv_df = pd.DataFrame(csv_rows)
-
-# Reorder columns to match the output.csv format
-csv_df = csv_df[[
-    COLUMN_PARENT_TAG, COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME,
-    COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE, COLUMN_UNIQUEITEMS
-]]
-
-# Write the DataFrame to a CSV file
-csv_df.to_csv(csv_file_path, index=False)
-print(f"JSON to CSV conversion completed. {json_file_path} --> {csv_file_path}")
+# Convert DataFrame to CSV
+df.to_csv(output_file, index=False)

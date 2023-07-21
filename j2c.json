@@ -1,5 +1,5 @@
 {
-    "distributionPolicy": {
+   "distributionPolicy": {
         "title": "distributionPolicy",
         "description": "Distribution Policy",
         "type": "array",
@@ -31,21 +31,11 @@
                     "sourceName": "Salesforce Data Dictionary",
                     "sourceType": "Service",
                     "sourceAttribute": "FM_fund.Fund_id_c"
-                }
-            ]
-        }
-    },
-    "fundName": {
-        "title": "fundName",
-        "description": "Fund Name",
-        "type": "string",
-        "x-collibra": {
-            "primaryKey": true,
-            "sources": [
+                },
                 {
-                    "sourceName": "Salesforce Data Dictionary",
-                    "sourceType": "Service",
-                    "sourceAttribute": "FM_fund.Fund_Legal_Name"
+                    "sourceName": "IDR",
+                    "sourceType": "Database",
+                    "sourceAttribute": "Fund.FundId"
                 }
             ]
         }
@@ -58,7 +48,7 @@
             "redemptionAdvanceNoticedays": {
                 "title": "redemptionAdvanceNoticedays",
                 "description": "redemption Advance Noticedays",
-                "type": "number",
+                "type": "object.number",
                 "x-collibra": {
                     "primaryKey": false,
                     "sources": [
@@ -73,7 +63,7 @@
             "redemptionAdvanceNoticeDayOfMonth": {
                 "title": "redemptionAdvanceNoticeDayOfMonth",
                 "description": "redemption Advance Notice DayOfMonth",
-                "type": "string",
+                "type": "object.string",
                 "x-collibra": {
                     "primaryKey": false,
                     "sources": [
@@ -85,6 +75,21 @@
                     ]
                 }
             }
+        }
+    },
+        "fundName": {
+        "title": "fundName",
+        "description": "Fund Name",
+        "type": "string",
+        "x-collibra": {
+            "primaryKey": true,
+            "sources": [
+                {
+                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceType": "Service",
+                    "sourceAttribute": "FM_fund.Fund_Legal_Name"
+                }
+            ]
         }
     }
 }
