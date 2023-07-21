@@ -32,6 +32,7 @@ NODE_UNIQUEITEMS = "uniqueItems"
 BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
 COMPLEX_TYPE = ["array", "object"]
 
+ERROR_1_BASIC_ARRAY_NO_SOURCE = []
 def csv_to_json(csv_file_path, json_file_path):
     # Read the CSV file using pandas and specify column types as string
     df = pd.read_csv(csv_file_path, dtype=str)
@@ -49,9 +50,10 @@ def csv_to_json(csv_file_path, json_file_path):
     if records_to_process > 0:
         df = df.head(records_to_process)
 
+
     # Iterate over each row in the DataFrame
     for _, row in df.iterrows():
-        #print(f"{_}")
+
         parent_tag = row[COLUMN_PARENT_TAG]
         ov_name = row[COLUMN_OV_NAME]
         description = row[COLUMN_DESCRIPTION].strip() if not pd.isna(row[COLUMN_DESCRIPTION]) else ""
@@ -68,7 +70,7 @@ def csv_to_json(csv_file_path, json_file_path):
         source_type = row[COLUMN_SOURCE_TYPE].strip() if not pd.isna(row[COLUMN_SOURCE_TYPE]) else row[COLUMN_SOURCE_TYPE]
         source_attribute = row[COLUMN_SOURCE_ATTRIBUTE].strip() if not pd.isna(row[COLUMN_SOURCE_ATTRIBUTE]) else row[COLUMN_SOURCE_ATTRIBUTE]
         uniqueItems = True if not pd.isna(row[COLUMN_UNIQUEITEMS]) and row[COLUMN_UNIQUEITEMS].strip().lower()  == "true" else False
-
+        print(f"{_}, {ov_name}")
         if pd.isna(parent_tag) :
             if ov_name not in json_data:
 
@@ -89,20 +91,23 @@ def csv_to_json(csv_file_path, json_file_path):
                     if not pd.isna(ov_node_subtype) and ov_node_subtype not in BASIC_TYPES:
                         json_data[ov_name][NODE_ITEMS][NODE_PROPERTIES]= {}
                     else:
-                        # add x-collibra node for array of basic type
+                        # add x-collibra node for array of basic type. Only if the source is defined.
                         if not pd.isna(source_name):
                             source = {
                                 'sourceName': source_name,
                                 'sourceType': source_type,
                                 'sourceAttribute': source_attribute
                             }
-                        if NODE_X_COLLIBRA not in json_data[ov_name]:
-                            json_data[ov_name][NODE_X_COLLIBRA] = {
-                                'primaryKey': primary_key,
-                                'sources': []
-                            }
-                        if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
-                            json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
+                            if NODE_X_COLLIBRA not in json_data[ov_name]:
+                                json_data[ov_name][NODE_X_COLLIBRA] = {
+                                    'primaryKey': primary_key,
+                                    'sources': []
+                                }
+                            if source not in json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES]:
+                                json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
+                        else:
+                            print(f"Error")
+                            ERROR_1_BASIC_ARRAY_NO_SOURCE.append(f"{ov_name}")
 
                 elif ov_node_type in BASIC_TYPES:
                     # add x-collibra only if source is present in csv row
