@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 
 # Define column names as constants
+COLUMN_PARENT_TAG = 'parentTag'
 COLUMN_OV_NAME = 'ovName'
 COLUMN_DESCRIPTION = 'description'
 COLUMN_TYPE = 'type'
@@ -12,6 +13,7 @@ COLUMN_PRIMARY_KEY = 'primaryKey'
 COLUMN_SOURCE_NAME = 'sourceName'
 COLUMN_SOURCE_TYPE = 'sourceType'
 COLUMN_SOURCE_ATTRIBUTE = 'sourceAttribute'
+COLUMN_UNIQUEITEMS = 'uniqueItems'
 
 def json_to_csv(json_file_path, csv_file_path):
     # Read the JSON file
@@ -21,19 +23,21 @@ def json_to_csv(json_file_path, csv_file_path):
     # Convert JSON to DataFrame
     rows = []
     for ov_name, data in json_data.items():
-        row = [ov_name, data[COLUMN_DESCRIPTION], data[COLUMN_TYPE], '', '', '', '']
+        uniqueItems = data.get(COLUMN_UNIQUEITEMS, '')
+        row = ['',ov_name, data[COLUMN_DESCRIPTION], data[COLUMN_TYPE], '', '', '', '',uniqueItems]
         if 'x-collibra' in data:
             row[3] = str(data['x-collibra'][COLUMN_PRIMARY_KEY])
             for source in data['x-collibra']['sources']:
                 row[4] = source[COLUMN_SOURCE_NAME]
                 row[5] = source[COLUMN_SOURCE_TYPE]
+#                row[5] = f"{data[COLUMN_TYPE]}.{source[COLUMN_SOURCE_TYPE]}" if data[COLUMN_TYPE] else source[COLUMN_SOURCE_TYPE]
                 row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
                 rows.append(row.copy())
         else:
             rows.append(row)
             if 'properties' in data:
                 for prop_name, prop_data in data['properties'].items():
-                    prop_row = [f"{ov_name}.{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
+                    prop_row = [f"{ov_name}",f"{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
                     if 'x-collibra' in prop_data:
                         prop_row[3] = str(prop_data['x-collibra'][COLUMN_PRIMARY_KEY])
                         for source in prop_data['x-collibra']['sources']:
@@ -45,7 +49,7 @@ def json_to_csv(json_file_path, csv_file_path):
                         rows.append(prop_row)
 
     # Create DataFrame
-    df = pd.DataFrame(rows, columns=[COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE])
+    df = pd.DataFrame(rows, columns=[COLUMN_PARENT_TAG,COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE, COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE, COLUMN_SOURCE_ATTRIBUTE, COLUMN_UNIQUEITEMS])
 
     # Create a backup of the existing CSV file
     backup_file_path = add_timestamp_suffix(csv_file_path)
@@ -76,6 +80,6 @@ def add_timestamp_suffix(file_path):
     return backup_file_path
 
 # Example usage
-json_file_path = 'input.json'
-csv_file_path = 'output.csv'
+json_file_path = 'j2c.json'
+csv_file_path = 'j2c_t.csv'
 json_to_csv(json_file_path, csv_file_path)
