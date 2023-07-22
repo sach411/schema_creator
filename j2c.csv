@@ -1,5 +1,5 @@
 parentTag,ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribute,uniqueItems
-,distributionPolicy,Distribution Policy,array,False,Salesforce Data Dictionary,Service,FM_fund>distribution_policy,True
+,distributionPolicy,Distribution Policy,array,,,,,True
 ,fundSFDCId,Fund Id,string,False,Salesforce Data Dictionary,Service,FM_fund.Fund_id_c,
 ,fundName,Fund Name,string,True,Salesforce Data Dictionary,Service,FM_fund.Fund_Legal_Name,
 ,dealingTerms,dealing Terms,object,,,,,

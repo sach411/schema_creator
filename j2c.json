@@ -1,21 +1,21 @@
 {
-   "distributionPolicy": {
+    "distributionPolicy": {
         "title": "distributionPolicy",
-        "description": "Distribution Policy",
+        "description": "MAIN ,Distribution Policy",
         "type": "array",
         "uniqueItems": true,
         "items": {
             "title": "distributionPolicy",
-            "description": "Distribution Policy",
-            "type": "string"
+            "description": "MAIN ,Distribution Policy",
+            "type": "number"
         },
         "x-collibra": {
             "primaryKey": false,
             "sources": [
                 {
-                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceName": "Salesforce data Dictionary",
                     "sourceType": "Service",
-                    "sourceAttribute": "FM_fund>distribution_policy"
+                    "sourceAttribute": "FM_Fund__c > Distribution_Policy__C"
                 }
             ]
         }

@@ -1,0 +1,2 @@
+parentTag,ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribute,uniqueItems
+,distributionPolicy1,"MAIN ,Distribution Policy",array.number,false,SF data  dict,Service,fm dist policy,True

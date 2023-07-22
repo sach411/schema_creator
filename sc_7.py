@@ -2,6 +2,7 @@ import os
 
 import pandas as pd
 import json
+from datetime import datetime
 
 # Define constants for column names
 COLUMN_PARENT_TAG = 'parentTag'
@@ -32,7 +33,11 @@ NODE_UNIQUEITEMS = "uniqueItems"
 BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
 COMPLEX_TYPE = ["array", "object"]
 
-ERROR_1_BASIC_ARRAY_NO_SOURCE = []
+WARN_1_ARRAY_NO_SOURCE_DEFINED = []
+ERROR_1_ARRAY_NO_TYPE_DEFINED = []
+ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINED},
+                 {"ERROR_1_ARRAY_NO_TYPE_DEFINED": ERROR_1_ARRAY_NO_TYPE_DEFINED}]
+
 def csv_to_json(csv_file_path, json_file_path):
     # Read the CSV file using pandas and specify column types as string
     df = pd.read_csv(csv_file_path, dtype=str)
@@ -52,7 +57,7 @@ def csv_to_json(csv_file_path, json_file_path):
 
 
     # Iterate over each row in the DataFrame
-    for _, row in df.iterrows():
+    for rownum, row in df.iterrows():
 
         parent_tag = row[COLUMN_PARENT_TAG]
         ov_name = row[COLUMN_OV_NAME]
@@ -65,12 +70,14 @@ def csv_to_json(csv_file_path, json_file_path):
         ov_node_subtype = ""
         if len(ovnt) == 2:
             ov_node_subtype = ovnt[1]
+        if ov_node_type == NODE_ARRAY and ov_node_subtype == "":
+            ERROR_1_ARRAY_NO_TYPE_DEFINED.append(f"{rownum}-{ov_name}")
         primary_key = True if not pd.isna(row[COLUMN_PRIMARY_KEY]) and (row[COLUMN_PRIMARY_KEY].strip()).lower() == "true" else False
         source_name = row[COLUMN_SOURCE_NAME].strip() if not pd.isna(row[COLUMN_SOURCE_NAME]) else row[COLUMN_SOURCE_NAME]
         source_type = row[COLUMN_SOURCE_TYPE].strip() if not pd.isna(row[COLUMN_SOURCE_TYPE]) else row[COLUMN_SOURCE_TYPE]
         source_attribute = row[COLUMN_SOURCE_ATTRIBUTE].strip() if not pd.isna(row[COLUMN_SOURCE_ATTRIBUTE]) else row[COLUMN_SOURCE_ATTRIBUTE]
         uniqueItems = True if not pd.isna(row[COLUMN_UNIQUEITEMS]) and row[COLUMN_UNIQUEITEMS].strip().lower()  == "true" else False
-        print(f"{_}, {ov_name}")
+        print(f"{rownum}, {ov_name}")
         if pd.isna(parent_tag) :
             if ov_name not in json_data:
 
@@ -82,11 +89,12 @@ def csv_to_json(csv_file_path, json_file_path):
                 if ov_node_type == NODE_OBJECT:
                     json_data[ov_name][NODE_PROPERTIES] = {}
                 if ov_node_type == NODE_ARRAY:
+
                     json_data[ov_name][NODE_UNIQUEITEMS] = uniqueItems
                     json_data[ov_name][NODE_ITEMS] = {
                         NODE_TITLE : ov_name,
                         NODE_DESCRIPTION: description,
-                        NODE_TYPE: ov_type.split('.')[1]
+                        NODE_TYPE: ov_node_subtype
                     }
                     if not pd.isna(ov_node_subtype) and ov_node_subtype not in BASIC_TYPES:
                         json_data[ov_name][NODE_ITEMS][NODE_PROPERTIES]= {}
@@ -107,7 +115,7 @@ def csv_to_json(csv_file_path, json_file_path):
                                 json_data[ov_name][NODE_X_COLLIBRA][NODE_SOURCES].append(source)
                         else:
                             print(f"Error")
-                            ERROR_1_BASIC_ARRAY_NO_SOURCE.append(f"{ov_name}")
+                            WARN_1_ARRAY_NO_SOURCE_DEFINED.append(f"{ov_name}")
 
                 elif ov_node_type in BASIC_TYPES:
                     # add x-collibra only if source is present in csv row
@@ -161,14 +169,31 @@ def csv_to_json(csv_file_path, json_file_path):
                     }
                 }
 
+    # Create a backup of the existing JSON file
+    backup_file_path = add_timestamp_suffix(json_file_path)
+    try:
+        os.rename(json_file_path, backup_file_path)
+        print(f"JSON file renamed from '{json_file_path}' to '{backup_file_path}' successfully.")
+    except Exception as e:
+        print(f"An error occurred while renaming the CSV file: {e}")
+
     # Write the JSON data to a file
     with open(json_file_path, 'w') as json_file:
         json.dump(json_data, json_file, indent=4)
 
     print(f"CSV to JSON conversion completed. {csv_file_path} --> {json_file_path}")
 
+
+def add_timestamp_suffix(file_path):
+    timestamp = datetime.now().strftime('%m_%d_%Y_%H_%M_%S')
+    file_name, extension = file_path.rsplit('.', 1)
+    backup_file_path = f"{file_name}_{timestamp}.{extension}"
+    return backup_file_path
+
 # Example usage
-csv_file_path = 'c2j.csv'
+csv_file_path = 'j2c_t.csv'
 json_file_path = 'c2j.json'
 csv_to_json(csv_file_path, json_file_path)
 print(f"<{csv_file_path}, {json_file_path}>")
+#print(f"ERROR_1_BASIC_ARRAY_NO_SOURCE -> {WARN_1_ARRAY_NO_SOURCE_DEFINED}")
+print(f"{ERRORS_WARNINGS}")

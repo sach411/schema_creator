@@ -1,90 +1,23 @@
 {
-    "distributionPolicy": {
-        "title": "distributionPolicy",
-        "description": "Distribution Policy",
+    "distributionPolicy1": {
+        "title": "distributionPolicy1",
+        "description": "MAIN ,Distribution Policy",
         "type": "array",
         "uniqueItems": true,
         "items": {
-            "title": "distributionPolicy",
-            "description": "Distribution Policy",
-            "type": "string"
+            "title": "distributionPolicy1",
+            "description": "MAIN ,Distribution Policy",
+            "type": "number"
         },
         "x-collibra": {
             "primaryKey": false,
             "sources": [
                 {
-                    "sourceName": "Salesforce Data Dictionary",
+                    "sourceName": "SF data  dict",
                     "sourceType": "Service",
-                    "sourceAttribute": "FM_fund>distribution_policy"
+                    "sourceAttribute": "fm dist policy"
                 }
             ]
-        }
-    },
-    "fundSFDCId": {
-        "title": "fundSFDCId",
-        "description": "Fund Id",
-        "type": "string",
-        "x-collibra": {
-            "primaryKey": false,
-            "sources": [
-                {
-                    "sourceName": "Salesforce Data Dictionary",
-                    "sourceType": "Service",
-                    "sourceAttribute": "FM_fund.Fund_id_c"
-                }
-            ]
-        }
-    },
-    "fundName": {
-        "title": "fundName",
-        "description": "Fund Name",
-        "type": "string",
-        "x-collibra": {
-            "primaryKey": true,
-            "sources": [
-                {
-                    "sourceName": "Salesforce Data Dictionary",
-                    "sourceType": "Service",
-                    "sourceAttribute": "FM_fund.Fund_Legal_Name"
-                }
-            ]
-        }
-    },
-    "dealingTerms": {
-        "title": "dealingTerms",
-        "description": "dealing Terms",
-        "type": "object",
-        "properties": {
-            "redemptionAdvanceNoticedays": {
-                "title": "redemptionAdvanceNoticedays",
-                "description": "redemption Advance Noticedays",
-                "type": "number",
-                "x-collibra": {
-                    "primaryKey": false,
-                    "sources": [
-                        {
-                            "sourceName": "Salesforce Data Dictionary",
-                            "sourceType": "Service",
-                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticedays"
-                        }
-                    ]
-                }
-            },
-            "redemptionAdvanceNoticeDayOfMonth": {
-                "title": "redemptionAdvanceNoticeDayOfMonth",
-                "description": "redemption Advance Notice DayOfMonth",
-                "type": "string",
-                "x-collibra": {
-                    "primaryKey": false,
-                    "sources": [
-                        {
-                            "sourceName": "Salesforce Data Dictionary",
-                            "sourceType": "Service",
-                            "sourceAttribute": "FM_fund.redemptionAdvanceNoticeDayOfMonth"
-                        }
-                    ]
-                }
-            }
         }
     }
 }
