@@ -67,6 +67,7 @@ def json_to_csv(json_file_path, csv_file_path):
         uniqueItems = data.get(COLUMN_UNIQUEITEMS, '')
         description = data.get(COLUMN_DESCRIPTION, '')
         ov_node_type = data.get(COLUMN_TYPE, '')
+        x_collibra_node = data.get(NODE_X_COLLIBRA)
         row = ['',ov_name, description, ov_node_type, '', '', '', '',uniqueItems]
 
         # process x-collibra
@@ -106,6 +107,7 @@ def json_to_csv(json_file_path, csv_file_path):
                         # replace title, description if present
                         row[INDEX_TYPE] = f"{row[INDEX_TYPE]}.{ov_node_sub_type}"
                         # add x-collibra attributes... from x-collibra - primaryKey, sources tag if source is present
+                        #get_source_data()
                 else:
                     ARRAY_WITHOUT_TYPE.append(ov_name)
 
