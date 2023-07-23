@@ -55,6 +55,13 @@ def csv_to_json(csv_file_path, json_file_path):
     if records_to_process > 0:
         df = df.head(records_to_process)
 
+    process_records = os.getenv('process_records')
+    if process_records:
+        df = df[df[COLUMN_OV_NAME].isin((process_records.split(','))) |
+        df[COLUMN_PARENT_TAG].isin(process_records.split(','))]
+
+    df_rows, df_columns = df.shape
+    print(f"Input file: {csv_file_path} \nProcessing {df_rows} records: {df[COLUMN_OV_NAME].to_list()}")
 
     # Iterate over each row in the DataFrame
     for rownum, row in df.iterrows():
@@ -78,9 +85,9 @@ def csv_to_json(csv_file_path, json_file_path):
         source_attribute = row[COLUMN_SOURCE_ATTRIBUTE].strip() if not pd.isna(row[COLUMN_SOURCE_ATTRIBUTE]) else row[COLUMN_SOURCE_ATTRIBUTE]
         uniqueItems = True if not pd.isna(row[COLUMN_UNIQUEITEMS]) and row[COLUMN_UNIQUEITEMS].strip().lower()  == "true" else False
         print(f"{rownum}, {ov_name}")
+        # no parent_tag --> row is for basic type or first entry for array of object or object
         if pd.isna(parent_tag) :
             if ov_name not in json_data:
-
                 json_data[ov_name] = {
                     NODE_TITLE: ov_name,
                     NODE_DESCRIPTION: description,
@@ -89,7 +96,6 @@ def csv_to_json(csv_file_path, json_file_path):
                 if ov_node_type == NODE_OBJECT:
                     json_data[ov_name][NODE_PROPERTIES] = {}
                 if ov_node_type == NODE_ARRAY:
-
                     json_data[ov_name][NODE_UNIQUEITEMS] = uniqueItems
                     json_data[ov_name][NODE_ITEMS] = {
                         NODE_TITLE : ov_name,
@@ -158,8 +164,11 @@ def csv_to_json(csv_file_path, json_file_path):
                 parent_properties[ov_name] = {
                     NODE_TITLE: ov_name,
                     NODE_DESCRIPTION: description,
-                    NODE_TYPE: ov_type,
-                    NODE_X_COLLIBRA: {
+                    NODE_TYPE: ov_type
+                }
+                # add x-collibra tag only if source attribute is present in csv
+                if not (pd.isna(source_name) or pd.isna(source_type) or pd.isna(source_attribute)):
+                    parent_properties[ov_name][NODE_X_COLLIBRA] = {
                         NODE_PRIMARY_KEY: primary_key,
                         NODE_SOURCES: [{
                             NODE_SOURCE_NAME: source_name,
@@ -167,7 +176,6 @@ def csv_to_json(csv_file_path, json_file_path):
                             NODE_SOURCE_ATTRIBUTE: source_attribute
                         }]
                     }
-                }
 
     # Create a backup of the existing JSON file
     backup_file_path = add_timestamp_suffix(json_file_path)
@@ -179,7 +187,7 @@ def csv_to_json(csv_file_path, json_file_path):
 
     # Write the JSON data to a file
     with open(json_file_path, 'w') as json_file:
-        json.dump(json_data, json_file, indent=4)
+        json.dump(json_data, json_file, indent=2)
 
     print(f"CSV to JSON conversion completed. {csv_file_path} --> {json_file_path}")
 
