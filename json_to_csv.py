@@ -48,9 +48,11 @@ COMPLEX_TYPE = ["array", "object"]
 
 WARN_1_ARRAY_NO_SOURCE_DEFINED = []
 ERROR_1_ARRAY_NO_TYPE_DEFINED = []
+ERROR_1_ARRAY_UNKNOWN_SUBTYPE = []
 ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED = []
 ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINED},
                  {"ERROR_1_ARRAY_NO_TYPE_DEFINED": ERROR_1_ARRAY_NO_TYPE_DEFINED},
+                 {"ERROR_1_ARRAY_UNKNOWN_SUBTYPE":ERROR_1_ARRAY_UNKNOWN_SUBTYPE},
                  {"ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED":ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED}]
 
 def env_setup(json_data: dict, input_file_path=None) -> dict:
@@ -76,7 +78,7 @@ def json_to_csv(json_file_path, csv_file_path):
         uniqueItems = data.get(COLUMN_UNIQUEITEMS, '')
         description = data.get(COLUMN_DESCRIPTION, '')
         ov_node_type = data.get(COLUMN_TYPE, '')
-        x_collibra_node = data.get(NODE_X_COLLIBRA)
+        #x_collibra_node = data.get(NODE_X_COLLIBRA)
         row = ['',ov_name, description, ov_node_type, '', '', '', '',uniqueItems]
 
         if ov_node_type in BASIC_TYPES:
@@ -142,16 +144,12 @@ def json_to_csv(json_file_path, csv_file_path):
                                     rows.append(prop_row.copy())
                             else:
                                 rows.append(prop_row)
+                else:
+                    print(f"unknown sub type for array {ov_name}")
+                    ERROR_1_ARRAY_UNKNOWN_SUBTYPE.append(f"{ov_name}")
             else:
                 # if node of `type` `array` doesn't have `type` in `items`, it's an error.
                 ERROR_1_ARRAY_NO_TYPE_DEFINED.append(ov_name)
-
-            #rows.append(row)
-
-
-
-
-
 
     # Create DataFrame
     df = pd.DataFrame(rows,
@@ -163,23 +161,22 @@ def json_to_csv(json_file_path, csv_file_path):
     backup_file_path = add_timestamp_suffix(csv_file_path)
     try:
         os.rename(csv_file_path, backup_file_path)
-        #print(f"CSV file renamed from '{csv_file_path}' to '{backup_file_path}' successfully.")
     except Exception as e:
         print(f"An error occurred while renaming the CSV file: {e}")
 
     # Write DataFrame to CSV file
     df.to_csv(csv_file_path, index=False)
-    print(f"CSV file created successfully. {csv_file_path}")
+    print(f"Output file: {csv_file_path}")
 
     # Delete backed-up CSV files older than 5 minutes
     current_time = time.time()
     directory = os.path.dirname(os.path.abspath(csv_file_path))
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
-        if filename.startswith('output_') and filename.endswith('.csv'):
+        if filename.startswith('j2c_t_') and filename.endswith('.csv'):
             if (current_time - os.path.getmtime(file_path)) > 300:
                 os.remove(file_path)
-                print(f"Removed old backed-up CSV file: {file_path}")
+                #print(f"Removed old backed-up CSV file: {file_path}")
 
 def add_timestamp_suffix(file_path):
     timestamp = datetime.now().strftime('%m_%d_%Y_%H_%M_%S')
