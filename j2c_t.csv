@@ -1,2 +1,8 @@
 parentTag,ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribute,uniqueItems
-,distributionPolicy1,"MAIN ,Distribution Policy",array.number,false,SF data  dict,Service,fm dist policy,True
+,fundSFDCId,Fund Id,string,False,Salesforce Data Dictionary,Service,FM_fund.Fund_id_c,
+,dealingTerms,dealing Terms,object,,,,,
+dealingTerms,redemptionAdvanceNoticedays,redemption Advance Noticedays,number,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticedays,
+dealingTerms,redemptionAdvanceNoticeDayOfMonth,redemption Advance Notice DayOfMonth,string,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticeDayOfMonth,
+,fundPrimeBroker,Fund Prime Broker,array.object,,,,,True
+fundPrimeBroker,primeBrokerAccountNumber,Fund Prime Broker -  Account Number,integer,False,Salesforce Data Dictionary,Service,FM_fund__c > primeBrokerAccountNumber,
+fundPrimeBroker,primeBrokerAccountName,Fund Prime Broker -  Account name,string,True,Salesforce Data Dictionary,Service,FM_fund__c > primeBrokerAccountname,
