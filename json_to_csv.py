@@ -53,6 +53,8 @@ ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINE
 
 def env_setup(json_data: dict, input_file_path=None) -> dict:
     process_nodes = os.getenv('process_nodes', 'ALL')
+    print(f"process_nodes: {process_nodes}")
+    #process_nodes = "fundSFDCId"
     process_nodes = process_nodes.split(',') if process_nodes != 'ALL' else []
     print(f"Processing following nodes: {process_nodes} from {input_file_path}")
     if len(process_nodes) > 0:
@@ -75,19 +77,18 @@ def json_to_csv(json_file_path, csv_file_path):
         x_collibra_node = data.get(NODE_X_COLLIBRA)
         row = ['',ov_name, description, ov_node_type, '', '', '', '',uniqueItems]
 
-        # process x-collibra
-        '''
-        if NODE_X_COLLIBRA in data:
-            row[3] = str(data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
-            for source in data[NODE_X_COLLIBRA]['sources']:
-                row[4] = source[COLUMN_SOURCE_NAME]
-                row[5] = source[COLUMN_SOURCE_TYPE]
-#                row[5] = f"{data[COLUMN_TYPE]}.{source[COLUMN_SOURCE_TYPE]}" if data[COLUMN_TYPE] else source[COLUMN_SOURCE_TYPE]
-                row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
-                rows.append(row.copy())
-        else:
-        '''
-        #rows.append(row)
+        if ov_node_type in BASIC_TYPES:
+
+            # process x-collibra
+            if NODE_X_COLLIBRA in data:
+                row[INDEX_PRIMARY_KEY] = str(data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
+                for source in data[NODE_X_COLLIBRA][NODE_SOURCES]:
+                    row[INDEX_SOURCE_NAME] = source[COLUMN_SOURCE_NAME]
+                    row[INDEX_SOURCE_TYPE] = source[COLUMN_SOURCE_TYPE]
+                    row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
+                    rows.append(row.copy())
+            else:
+                rows.append(row)
         # if node is object type
         if ov_node_type == NODE_OBJECT:
             rows.append(row)
