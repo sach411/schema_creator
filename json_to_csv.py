@@ -56,11 +56,12 @@ ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINE
                  {"ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED":ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED}]
 
 def env_setup(json_data: dict, input_file_path=None) -> dict:
+    pn = list(json_data.keys())
     process_nodes = os.getenv('process_nodes', 'ALL')
     print(f"process_nodes: {process_nodes}")
     #process_nodes = "fundPrimeBroker"
-    process_nodes = process_nodes.split(',') if process_nodes != 'ALL' else []
-    print(f"Processing following nodes: {process_nodes} from {input_file_path}")
+    process_nodes = process_nodes.split(',') if process_nodes != 'ALL' else pn
+    print(f"Input file: {input_file_path}, \nProcessing {len(process_nodes)} nodes: \n{process_nodes}  ")
     if len(process_nodes) > 0:
         json_data = {key:value for key, value in json_data.items() if key in process_nodes}
     return json_data
