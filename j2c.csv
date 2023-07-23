@@ -5,3 +5,6 @@ parentTag,ovName,description,type,primaryKey,sourceName,sourceType,sourceAttribu
 ,dealingTerms,dealing Terms,object,,,,,
 dealingTerms,redemptionAdvanceNoticedays,redemption Advance Noticedays,number,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticedays,
 dealingTerms,redemptionAdvanceNoticeDayOfMonth,redemption Advance Notice DayOfMonth,string,False,Salesforce Data Dictionary,Service,FM_fund.redemptionAdvanceNoticeDayOfMonth,
+,fundPrimeBroker,Fund Prime Broker,array.object,,,,,true
+fundPrimeBroker,primeBrokerAccountNumber,Fund Prime Broker -  Account Number,integer,false,Salesforce Data Dictionary,Service,FM_fund__c > primeBrokerAccountNumber,
+fundPrimeBroker,primeBrokerAccountName,Fund Prime Broker -  Account name,string,true,Salesforce Data Dictionary,Service,FM_fund__c > primeBrokerAccountname,

@@ -48,13 +48,15 @@ COMPLEX_TYPE = ["array", "object"]
 
 WARN_1_ARRAY_NO_SOURCE_DEFINED = []
 ERROR_1_ARRAY_NO_TYPE_DEFINED = []
+ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED = []
 ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINED},
-                 {"ERROR_1_ARRAY_NO_TYPE_DEFINED": ERROR_1_ARRAY_NO_TYPE_DEFINED}]
+                 {"ERROR_1_ARRAY_NO_TYPE_DEFINED": ERROR_1_ARRAY_NO_TYPE_DEFINED},
+                 {"ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED":ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED}]
 
 def env_setup(json_data: dict, input_file_path=None) -> dict:
     process_nodes = os.getenv('process_nodes', 'ALL')
     print(f"process_nodes: {process_nodes}")
-    #process_nodes = "fundSFDCId"
+    #process_nodes = "fundPrimeBroker"
     process_nodes = process_nodes.split(',') if process_nodes != 'ALL' else []
     print(f"Processing following nodes: {process_nodes} from {input_file_path}")
     if len(process_nodes) > 0:
@@ -78,7 +80,6 @@ def json_to_csv(json_file_path, csv_file_path):
         row = ['',ov_name, description, ov_node_type, '', '', '', '',uniqueItems]
 
         if ov_node_type in BASIC_TYPES:
-
             # process x-collibra
             if NODE_X_COLLIBRA in data:
                 row[INDEX_PRIMARY_KEY] = str(data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
@@ -95,11 +96,11 @@ def json_to_csv(json_file_path, csv_file_path):
             for prop_name, prop_data in data[NODE_PROPERTIES].items():
                 prop_row = [f"{ov_name}",f"{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
                 if NODE_X_COLLIBRA in prop_data:
-                    prop_row[3] = str(prop_data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
-                    for source in prop_data[NODE_X_COLLIBRA]['sources']:
-                        prop_row[4] = source[COLUMN_SOURCE_NAME]
-                        prop_row[5] = source[COLUMN_SOURCE_TYPE]
-                        prop_row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
+                    prop_row[INDEX_PRIMARY_KEY] = str(prop_data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
+                    for source in prop_data[NODE_X_COLLIBRA][NODE_SOURCES]:
+                        prop_row[INDEX_SOURCE_NAME] = source[COLUMN_SOURCE_NAME]
+                        prop_row[INDEX_SOURCE_TYPE] = source[COLUMN_SOURCE_TYPE]
+                        prop_row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
                         rows.append(prop_row.copy())
                 else:
                     rows.append(prop_row)
@@ -123,14 +124,29 @@ def json_to_csv(json_file_path, csv_file_path):
                             source[COLUMN_SOURCE_TYPE]
                             row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
                 elif ov_node_sub_type in COMPLEX_TYPE:
-                    # TODO: array of object
-                    print(f"array of object")
-
+                    if ov_node_sub_type == NODE_OBJECT:
+                        row[INDEX_TYPE] = f"{row[INDEX_TYPE]}.{ov_node_sub_type}"
+                        rows.append(row)
+                        for prop_name, prop_data in array_items[NODE_PROPERTIES].items():
+                            prop_description = prop_data.get(COLUMN_DESCRIPTION, '')
+                            prop_type = prop_data.get(COLUMN_TYPE, '')
+                            if '' == prop_type:
+                                ERROR_1_OBJECT_PROPRTY_NO_TYPE_DEFINED.append(f"{ov_name}.{prop_name}")
+                            prop_row = [f"{ov_name}", f"{prop_name}", prop_description,prop_type, '', '', '', '']
+                            if NODE_X_COLLIBRA in prop_data:
+                                prop_row[INDEX_PRIMARY_KEY] = str(prop_data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
+                                for source in prop_data[NODE_X_COLLIBRA][NODE_SOURCES]:
+                                    prop_row[INDEX_SOURCE_NAME] = source[COLUMN_SOURCE_NAME]
+                                    prop_row[INDEX_SOURCE_TYPE] = source[COLUMN_SOURCE_TYPE]
+                                    prop_row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
+                                    rows.append(prop_row.copy())
+                            else:
+                                rows.append(prop_row)
             else:
                 # if node of `type` `array` doesn't have `type` in `items`, it's an error.
                 ERROR_1_ARRAY_NO_TYPE_DEFINED.append(ov_name)
 
-            rows.append(row)
+            #rows.append(row)
 
 
 
