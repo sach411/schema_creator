@@ -191,7 +191,7 @@ def add_timestamp_suffix(file_path):
     return backup_file_path
 
 # Example usage
-csv_file_path = 'j2c_t.csv'
+csv_file_path = 'c2j.csv'
 json_file_path = 'c2j.json'
 csv_to_json(csv_file_path, json_file_path)
 print(f"<{csv_file_path}, {json_file_path}>")

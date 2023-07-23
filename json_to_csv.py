@@ -45,7 +45,12 @@ BASIC_TYPES = ["string", "boolean", "number"]  # other than "array", "object"
 COMPLEX_TYPE = ["array", "object"]
 
 #ERROR lists
-ARRAY_WITHOUT_TYPE = []
+
+WARN_1_ARRAY_NO_SOURCE_DEFINED = []
+ERROR_1_ARRAY_NO_TYPE_DEFINED = []
+ERRORS_WARNINGS=[{"WARN_1_ARRAY_NO_SOURCE_DEFINED":WARN_1_ARRAY_NO_SOURCE_DEFINED},
+                 {"ERROR_1_ARRAY_NO_TYPE_DEFINED": ERROR_1_ARRAY_NO_TYPE_DEFINED}]
+
 def env_setup(json_data: dict, input_file_path=None) -> dict:
     process_nodes = os.getenv('process_nodes', 'ALL')
     process_nodes = process_nodes.split(',') if process_nodes != 'ALL' else []
@@ -71,6 +76,7 @@ def json_to_csv(json_file_path, csv_file_path):
         row = ['',ov_name, description, ov_node_type, '', '', '', '',uniqueItems]
 
         # process x-collibra
+        '''
         if NODE_X_COLLIBRA in data:
             row[3] = str(data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
             for source in data[NODE_X_COLLIBRA]['sources']:
@@ -80,42 +86,54 @@ def json_to_csv(json_file_path, csv_file_path):
                 row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
                 rows.append(row.copy())
         else:
-            #rows.append(row)
-            # if node is object type
-            if ov_node_type == NODE_OBJECT:
-                rows.append(row)
-                for prop_name, prop_data in data[NODE_PROPERTIES].items():
-                    prop_row = [f"{ov_name}",f"{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
-                    if NODE_X_COLLIBRA in prop_data:
-                        prop_row[3] = str(prop_data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
-                        for source in prop_data[NODE_X_COLLIBRA]['sources']:
-                            prop_row[4] = source[COLUMN_SOURCE_NAME]
-                            prop_row[5] = source[COLUMN_SOURCE_TYPE]
-                            prop_row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
-                            rows.append(prop_row.copy())
-                    else:
-                        rows.append(prop_row)
-            # if node is array
-            if ov_node_type == NODE_ARRAY:
-                # array node must have items.
-                array_items = data.get(NODE_ITEMS)
-                if array_items:
-                    # update the row for type to include node sub type
-                    ov_node_sub_type = array_items.get(NODE_TYPE)
-                    # simple array
-                    if ov_node_sub_type in BASIC_TYPES:
-                        # replace title, description if present
-                        row[INDEX_TYPE] = f"{row[INDEX_TYPE]}.{ov_node_sub_type}"
-                        # add x-collibra attributes... from x-collibra - primaryKey, sources tag if source is present
-                        #get_source_data()
+        '''
+        #rows.append(row)
+        # if node is object type
+        if ov_node_type == NODE_OBJECT:
+            rows.append(row)
+            for prop_name, prop_data in data[NODE_PROPERTIES].items():
+                prop_row = [f"{ov_name}",f"{prop_name}", prop_data[COLUMN_DESCRIPTION], prop_data[COLUMN_TYPE], '', '', '', '']
+                if NODE_X_COLLIBRA in prop_data:
+                    prop_row[3] = str(prop_data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
+                    for source in prop_data[NODE_X_COLLIBRA]['sources']:
+                        prop_row[4] = source[COLUMN_SOURCE_NAME]
+                        prop_row[5] = source[COLUMN_SOURCE_TYPE]
+                        prop_row[6] = source[COLUMN_SOURCE_ATTRIBUTE]
+                        rows.append(prop_row.copy())
                 else:
-                    ARRAY_WITHOUT_TYPE.append(ov_name)
+                    rows.append(prop_row)
+        # if node is array
+        if ov_node_type == NODE_ARRAY:
+            # array node must have items.
+            array_items = data.get(NODE_ITEMS)
+            if array_items:
+                # update the row for type to include node sub type
+                ov_node_sub_type = array_items.get(NODE_TYPE)
+                # simple array
+                if ov_node_sub_type in BASIC_TYPES:
+                    # replace title, description if present
+                    row[INDEX_TYPE] = f"{row[INDEX_TYPE]}.{ov_node_sub_type}"
+                    # add x-collibra attributes... from x-collibra - primaryKey, sources tag if source is present
+                    if NODE_X_COLLIBRA in data:
+                        row[INDEX_PRIMARY_KEY] = str(data[NODE_X_COLLIBRA][COLUMN_PRIMARY_KEY])
+                        for source in data[NODE_X_COLLIBRA]['sources']:
+                            row[INDEX_SOURCE_NAME] = source[COLUMN_SOURCE_NAME]
+                            row[INDEX_SOURCE_TYPE] = f"{data[COLUMN_TYPE]}.{source[COLUMN_SOURCE_TYPE]}" if data[COLUMN_TYPE] else \
+                            source[COLUMN_SOURCE_TYPE]
+                            row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
+                elif ov_node_sub_type in COMPLEX_TYPE:
+                    # TODO: array of object
+                    print(f"array of object")
 
-                rows.append(row)
+            else:
+                # if node of `type` `array` doesn't have `type` in `items`, it's an error.
+                ERROR_1_ARRAY_NO_TYPE_DEFINED.append(ov_name)
+
+            rows.append(row)
 
 
 
-                    # array of object
+
 
 
     # Create DataFrame
@@ -157,3 +175,5 @@ json_file_path = 'j2c.json'
 csv_file_path = 'j2c_t.csv'
 print(f"{__file__}")
 json_to_csv(json_file_path, csv_file_path)
+print(f"{ERRORS_WARNINGS}")
+
