@@ -203,5 +203,4 @@ csv_file_path = 'c2j.csv'
 json_file_path = 'c2j.json'
 csv_to_json(csv_file_path, json_file_path)
 print(f"<{csv_file_path}, {json_file_path}>")
-#print(f"ERROR_1_BASIC_ARRAY_NO_SOURCE -> {WARN_1_ARRAY_NO_SOURCE_DEFINED}")
 print(f"{ERRORS_WARNINGS}")

@@ -126,6 +126,9 @@ def json_to_csv(json_file_path, csv_file_path):
                             row[INDEX_SOURCE_TYPE] = f"{data[COLUMN_TYPE]}.{source[COLUMN_SOURCE_TYPE]}" if data[COLUMN_TYPE] else \
                             source[COLUMN_SOURCE_TYPE]
                             row[INDEX_SOURCE_ATTRIBUTE] = source[COLUMN_SOURCE_ATTRIBUTE]
+                            rows.append(row.copy())
+                    else:
+                        rows.append(row)
                 elif ov_node_sub_type in COMPLEX_TYPE:
                     if ov_node_sub_type == NODE_OBJECT:
                         row[INDEX_TYPE] = f"{row[INDEX_TYPE]}.{ov_node_sub_type}"
