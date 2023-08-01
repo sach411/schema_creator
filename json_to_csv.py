@@ -66,12 +66,7 @@ def env_setup(json_data: dict, input_file_path=None) -> dict:
         json_data = {key:value for key, value in json_data.items() if key in process_nodes}
     return json_data
 
-def json_to_csv(json_file_path, csv_file_path):
-    # Read the JSON file
-    with open(json_file_path, 'r') as json_file:
-        json_data = json.load(json_file)
-
-    json_data = env_setup(json_data,input_file_path=json_file_path)
+def process(json_data:dict) -> list:
     # Convert JSON to DataFrame
     rows = []
     for ov_name, data in json_data.items():
@@ -155,12 +150,17 @@ def json_to_csv(json_file_path, csv_file_path):
                 # if node of `type` `array` doesn't have `type` in `items`, it's an error.
                 ERROR_1_ARRAY_NO_TYPE_DEFINED.append(ov_name)
 
+    return rows
+
+def list_to_df(rows:list):
     # Create DataFrame
     df = pd.DataFrame(rows,
                       columns=[COLUMN_PARENT_TAG,COLUMN_OV_NAME, COLUMN_DESCRIPTION, COLUMN_TYPE,
                                COLUMN_PRIMARY_KEY, COLUMN_SOURCE_NAME, COLUMN_SOURCE_TYPE,
                                COLUMN_SOURCE_ATTRIBUTE, COLUMN_UNIQUEITEMS])
+    return df
 
+def df_to_csv(df, csv_file_path):
     # Create a backup of the existing CSV file
     backup_file_path = add_timestamp_suffix(csv_file_path)
     try:
@@ -172,15 +172,32 @@ def json_to_csv(json_file_path, csv_file_path):
     df.to_csv(csv_file_path, index=False)
     print(f"Output file: {csv_file_path}")
 
-    # Delete backed-up CSV files older than 5 minutes
+def cleanup(csv_file_path, duration):
+    # Delete backed-up CSV files older than `duration` seconds - default 300 sec - 5 minutes
     current_time = time.time()
     directory = os.path.dirname(os.path.abspath(csv_file_path))
     for filename in os.listdir(directory):
         file_path = os.path.join(directory, filename)
         if filename.startswith('j2c_t_') and filename.endswith('.csv'):
-            if (current_time - os.path.getmtime(file_path)) > 300:
+            if (current_time - os.path.getmtime(file_path)) > duration:
                 os.remove(file_path)
                 #print(f"Removed old backed-up CSV file: {file_path}")
+
+
+def json_to_csv(json_file_path, csv_file_path):
+    # Read the JSON file
+    with open(json_file_path, 'r') as json_file:
+        json_data = json.load(json_file)
+
+    json_data = env_setup(json_data,input_file_path=json_file_path)
+
+    rows = process(json_data)
+
+    df = list_to_df(rows)
+
+    df_to_csv(df, csv_file_path)
+
+    cleanup(csv_file_path,duration=300)
 
 def add_timestamp_suffix(file_path):
     timestamp = datetime.now().strftime('%m_%d_%Y_%H_%M_%S')
