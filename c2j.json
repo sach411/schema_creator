@@ -1,23 +1,88 @@
 {
-    "distributionPolicy1": {
-        "title": "distributionPolicy1",
-        "description": "MAIN ,Distribution Policy",
-        "type": "array",
-        "uniqueItems": true,
-        "items": {
-            "title": "distributionPolicy1",
-            "description": "MAIN ,Distribution Policy",
-            "type": "number"
-        },
-        "x-collibra": {
+  "fundPrimeBroker": {
+    "title": "fundPrimeBroker",
+    "description": "Fund Prime Broker",
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "title": "fundPrimeBroker",
+      "description": "Fund Prime Broker",
+      "type": "object",
+      "properties": {
+        "primeBrokerAccountNumber": {
+          "title": "primeBrokerAccountNumber",
+          "description": "Fund Prime Broker -  Account Number",
+          "type": "integer",
+          "x-collibra": {
             "primaryKey": false,
             "sources": [
-                {
-                    "sourceName": "SF data  dict",
-                    "sourceType": "Service",
-                    "sourceAttribute": "fm dist policy"
-                }
+              {
+                "sourceName": "Salesforce Data Dictionary",
+                "sourceType": "Service",
+                "sourceAttribute": "FM_fund__c > primeBrokerAccountNumber"
+              }
             ]
+          }
+        },
+        "primeBrokerAccountName": {
+          "title": "primeBrokerAccountName",
+          "description": "Fund Prime Broker -  Account name",
+          "type": "string",
+          "x-collibra": {
+            "primaryKey": true,
+            "sources": [
+              {
+                "sourceName": "Salesforce Data Dictionary",
+                "sourceType": "Service",
+                "sourceAttribute": "FM_fund__c > primeBrokerAccountname"
+              }
+            ]
+          }
         }
+      }
     }
+  },
+  "feesSchedule": {
+    "title": "feesSchedule",
+    "description": "Fees Schedule",
+    "type": "array",
+    "uniqueItems": true,
+    "items": {
+      "title": "feesSchedule",
+      "description": "Fees Schedule",
+      "type": "object",
+      "properties": {
+        "foundersFeeExpDate": {
+          "title": "foundersFeeExpDate",
+          "description": "Founders Fee exp Date",
+          "type": "string",
+          "x-collibra": {
+            "primaryKey": false,
+            "sources": [
+              {
+                "sourceName": "Salesforce Data Dictionary",
+                "sourceType": "Service",
+                "sourceAttribute": "FM_fund__c > foundersfeeexpdate"
+              }
+            ]
+          }
+        },
+        "feesTieredSchedule": {
+          "description": "fees Tiered Schedule",
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "description": "fees Tiered Schedule",
+            "type": "object",
+            "properties": {
+              "assetBasisStart": {
+                "description": "Asset Basis Start",
+                "type": "number"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
 }
