@@ -57,10 +57,6 @@ class Record:
     record_num: int
 
 
-
-
-
-
 def csv_df(csv_file_path:str) -> DataFrame:
     """
     returns DataFrame from csv
@@ -142,6 +138,28 @@ def get_row(rownum:int, row: Series)-> Record:
     return r
 
 
+def generate_x_collibra(r:Record) -> dict:
+    """
+    returns x-collibra node if passed record has all source attributes
+    :param r:
+    :return:
+    """
+    if not (pd.isna(r.source_name) or pd.isna(r.source_type) or pd.isna(r.source_attribute)):
+        print(f"Source Present for {r.ov_name}")
+        d = { r.ov_name : {
+            NODE_X_COLLIBRA: {
+                NODE_PRIMARY_KEY: r.primary_key,
+                NODE_SOURCES: [
+                    {
+                        NODE_SOURCE_NAME: r.source_name,
+                        NODE_SOURCE_TYPE: r.source_type,
+                        NODE_SOURCE_ATTRIBUTE: r.source_attribute
+                     }
+                ]
+            }
+        }}
+
+
 def process_record(r:Record, json_data:dict):
     """
     process current record and update main json_data with the node
@@ -149,24 +167,43 @@ def process_record(r:Record, json_data:dict):
     :param json_data:
     :return:
     """
+
+    # 1. is the record having parentTag?
+    # if Yes, the new node has to be part of that.
+    # if no, this will be a new node
+
+    if r.parent_tag != "":
+        print(f"{r.ov_name} is part of existing node {r.parent_tag} like array/object")
+        # is record already present in json_data?
+    else:
+        print(f"{r.ov_name} is a node without any existing parent")
+
     node = { r.ov_name : {
         NODE_TITLE: r.ov_name,
         NODE_DESCRIPTION: r.description,
         NODE_TYPE: r.ov_node_type
-
     }}
     # identify the record type
+    print(f"{r.record_num} -> {r.ov_name} -> parent: {r.parent_tag} -> {r.ov_node_type}, subtype:{r.ov_node_subtype}")
     # simple
     if r.ov_node_type in BASIC_TYPES:
         if r.ov_name in json_data:
-            pass
+            print(f" {r.ov_name} Present.")
+        else:
+            print(f"{r.ov_name} NOT Present")
+            # TODO: create basic node. Add x-collibra if source present.
     # array
     # - needs items, uniqueItems
+    if r.ov_node_type == NODE_ARRAY:
+        if r.ov_name in json_data:
+            print(f" array: {r.ov_name} Present.")
+        else:
+            print(f"array: {r.ov_name} NOT Present")
 
     # object
     # - needs properties
 
-    # is this record having parentTag?
+
 
 
 
@@ -192,6 +229,8 @@ def csv_to_json(csv_file_path, json_file_path):
 
     for rownum, row in df.iterrows():
         r = get_row(rownum, row)
+
+        process_record(r,json_data)
 
 
 
